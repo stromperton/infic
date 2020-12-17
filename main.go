@@ -10,6 +10,8 @@ import (
 	tb "gopkg.in/tucnak/telebot.v2"
 )
 
+var db *pg.DB
+
 func main() {
 	var (
 		port      = os.Getenv("PORT")
@@ -33,8 +35,7 @@ func main() {
 		return
 	}
 
-	db := &pg.DB{}
-	ConnectDataBase(db)
+	ConnectDataBase()
 	defer db.Close()
 
 	//КОМАНДЫ
@@ -44,7 +45,7 @@ func main() {
 		if err != nil {
 			referral = AdminBot
 		}
-		u, isNewUser := NewDefaultUser(db, m.Sender.ID, referral)
+		u, isNewUser := NewDefaultUser(m.Sender.ID, referral)
 
 		if isNewUser {
 			fmt.Printf("Новый игрок: @%s[%d]\n", m.Sender.Username, u.ID)
@@ -65,14 +66,14 @@ func main() {
 	})
 
 	b.Handle(&RBtnWrite, func(m *tb.Message) {
-		u := GetUser(db, m.Sender.ID)
+		u := GetUser(m.Sender.ID)
 
-		u.SetBotState(db, WriteSetNameState)
+		u.SetBotState(WriteSetNameState)
 		b.Send(m.Sender, WriteSetNameState.Message())
 	})
 
 	b.Handle(tb.OnText, func(m *tb.Message) {
-		u := GetUser(db, m.Sender.ID)
+		u := GetUser(m.Sender.ID)
 
 		u.BotState.Action()
 	})

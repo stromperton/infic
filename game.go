@@ -2,8 +2,6 @@ package main
 
 import (
 	"strconv"
-
-	"github.com/go-pg/pg/v9"
 )
 
 //User Игрок
@@ -24,7 +22,7 @@ func (u *User) GetState() string {
 	return "Всё хорошо!" + strconv.Itoa(u.ID)
 }
 
-func (u *User) SetBotState(db *pg.DB, newState BotState) {
+func (u *User) SetBotState(newState BotState) {
 	u.BotState = newState
-	UpdateUser(db, *u)
+	UpdateUser(*u)
 }

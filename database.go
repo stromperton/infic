@@ -22,7 +22,7 @@ func createSchema(db *pg.DB) error {
 }
 
 //ConnectDataBase Подключение к базе данных
-func ConnectDataBase(db *pg.DB) {
+func ConnectDataBase() {
 	opt, err := pg.ParseURL(os.Getenv("DATABASE_URL"))
 	if err != nil {
 		panic(err)
@@ -38,7 +38,7 @@ func ConnectDataBase(db *pg.DB) {
 }
 
 //GetUser Извлечение игрока из базы данных по ID
-func GetUser(db *pg.DB, id int) User {
+func GetUser(id int) User {
 	u := &User{}
 	u.ID = id
 	err := db.Select(u)
@@ -50,7 +50,7 @@ func GetUser(db *pg.DB, id int) User {
 }
 
 //UpdateUser Обновление игрока из базы данных по ID
-func UpdateUser(db *pg.DB, u User) {
+func UpdateUser(u User) {
 	_, err := db.Model(u).WherePK().Update()
 	if err != nil {
 		fmt.Println(err)
@@ -58,7 +58,7 @@ func UpdateUser(db *pg.DB, u User) {
 }
 
 //NewDefaultUser Новый стандартный игрок
-func NewDefaultUser(db *pg.DB, id int, ref int) (User, bool) {
+func NewDefaultUser(id int, ref int) (User, bool) {
 	u := &User{}
 	u.ID = id
 	u.Ref = ref
@@ -77,7 +77,7 @@ func NewDefaultUser(db *pg.DB, id int, ref int) (User, bool) {
 }
 
 //CreateStory Создать историю
-func CreateStory(db *pg.DB, name string) {
+func CreateStory(name string) {
 	infic := Infic{
 		Name: name,
 	}
