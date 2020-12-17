@@ -10,6 +10,7 @@ var (
 	//DefaultUser Стандартный игрок
 	DefaultUser = &User{
 		ID:       0,
+		Ref:      AdminBot,
 		BotState: DefaultState,
 	}
 )
@@ -17,7 +18,7 @@ var (
 //User Игрок
 type User struct {
 	ID       int
-	Ref      int
+	Ref      int `pg:"ref,use_zero,notnull"`
 	Lang     string
 	BotState BotState
 }
