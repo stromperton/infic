@@ -41,6 +41,9 @@ func main() {
 	b.Handle("/start", func(m *tb.Message) {
 
 		referral, err := strconv.Atoi(m.Payload)
+		if err != nil {
+			referral = AdminBot
+		}
 		u, isNewUser := NewDefaultUser(db, m.Sender.ID, referral)
 
 		if isNewUser {

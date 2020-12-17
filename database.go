@@ -59,9 +59,11 @@ func UpdateUser(db *pg.DB, u User) {
 
 //NewDefaultUser Новый стандартный игрок
 func NewDefaultUser(db *pg.DB, id int, ref int) (User, bool) {
-	u := DefaultUser
+	u := &User{}
 	u.ID = id
 	u.Ref = ref
+	u.Lang = "rus"
+	u.BotState = DefaultState
 
 	res, err := db.Model(u).OnConflict("DO NOTHING").Insert()
 	if err != nil {

@@ -6,15 +6,6 @@ import (
 	"github.com/go-pg/pg/v9"
 )
 
-var (
-	//DefaultUser Стандартный игрок
-	DefaultUser = &User{
-		ID:       0,
-		Ref:      AdminBot,
-		BotState: DefaultState,
-	}
-)
-
 //User Игрок
 type User struct {
 	ID       int
