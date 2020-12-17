@@ -9,7 +9,7 @@ type User struct {
 	ID       int
 	Ref      int `pg:"ref,use_zero,notnull"`
 	Lang     string
-	BotState BotState
+	BotState BotState `pg:"bot_state,use_zero,notnull"`
 }
 
 //Infic Интерактивный рассказ
