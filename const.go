@@ -14,16 +14,19 @@ const (
 	MainMenuState
 	WriteSetNameState
 	WriteSetDescriptionState
+	AccountCheckState
 )
 
 func (d BotState) String() string {
-	return [...]string{"Default", "MainMenu", "WriteSetName"}[d]
+	return [...]string{"Default", "MainMenu", "WriteSetName", "AccountCheckState"}[d]
 }
 func (d BotState) Message() string {
 	return [...]string{
 		"Default",
 		"MainMenu",
 		"Введите название вашего инфика",
+		`🗝 <b>Аккаунт</b>
+		...`,
 	}[d]
 }
 

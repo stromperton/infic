@@ -72,6 +72,13 @@ func main() {
 		b.Send(m.Sender, WriteSetNameState.Message())
 	})
 
+	b.Handle(&RBtnAccount, func(m *tb.Message) {
+		u := GetUser(m.Sender.ID)
+
+		u.SetBotState(AccountCheckState)
+		b.Send(m.Sender, AccountCheckState.Message())
+	})
+
 	b.Handle(tb.OnText, func(m *tb.Message) {
 		u := GetUser(m.Sender.ID)
 
