@@ -54,7 +54,7 @@ var (
 		ReplyKeyboard:       [][]tb.ReplyButton{{RBtnRead}, {RBtnAccount, RBtnWrite}},
 	}
 
-	IBtnCreare   = tb.InlineButton{Text: "Начать новый", Data: "create"}
+	IBtnCreare   = tb.InlineButton{Text: "Начать новый", Unique: "create"}
 	InlineWhrite = &tb.ReplyMarkup{
 		InlineKeyboard: [][]tb.InlineButton{{IBtnCreare}},
 	}
