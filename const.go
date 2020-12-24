@@ -55,7 +55,7 @@ var (
 	}
 
 	IBtnCreare   = tb.InlineButton{Text: "Начать новый", Data: "create"}
-	InlineWhrite = &tb.InlineKeyboardMarkup{
+	InlineWhrite = &tb.ReplyMarkup{
 		InlineKeyboard: [][]tb.InlineButton{{IBtnCreare}},
 	}
 )
