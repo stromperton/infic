@@ -35,8 +35,11 @@ type Message struct {
 func (u *User) Action(text string) {
 	switch u.BotState {
 	case WriteSetNameState:
-		u.EditableInficID = CreateInfic(text, u.ID)
-		u.SetBotState(WriteSetDescriptionState)
+		UpdateModel(&Infic{
+			ID:   u.EditableInficID,
+			Name: text,
+		})
+		u.SetBotState(DefaultState)
 	case WriteSetDescriptionState:
 		UpdateModel(&Infic{
 			ID:          u.EditableInficID,

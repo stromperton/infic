@@ -38,6 +38,24 @@ func main() {
 	ConnectDataBase()
 	defer db.Close()
 
+	b.Handle(tb.OnText, func(m *tb.Message) {
+		u := GetUser(m.Sender.ID)
+
+		if m.Text[:2] == "/i" {
+			id, _ := strconv.Atoi(m.Text[2:])
+			message, err := SprintInfic(id)
+			if err != nil {
+				b.Send(m.Sender, "Инфик не существует...")
+			} else {
+				b.Send(m.Sender, message)
+			}
+		} else {
+
+			u.Action(m.Text)
+			b.Send(m.Sender, u.BotState.Message())
+		}
+	})
+
 	//КОМАНДЫ
 	b.Handle("/start", func(m *tb.Message) {
 
@@ -73,10 +91,11 @@ func main() {
 		myInfics := u.GetMyInfics()
 
 		for _, inf := range myInfics {
-			message += fmt.Sprintln(fmt.Sprintf("/i%d *%s*", inf.ID, inf.Name))
+
+			message += fmt.Sprintf("\n*/i%d %s*", inf.ID, inf.Name)
 		}
 
-		b.Send(m.Sender, message)
+		b.Send(m.Sender, message, IBtnCreare)
 	})
 
 	b.Handle(&RBtnAccount, func(m *tb.Message) {
@@ -86,29 +105,23 @@ func main() {
 		b.Send(m.Sender, AccountCheckState.Message())
 	})
 
-	b.Handle(tb.OnText, func(m *tb.Message) {
-		u := GetUser(m.Sender.ID)
-
-		if m.Text[:2] == "/i" {
-			id, _ := strconv.Atoi(m.Text[2:])
-			inf, err := GetInfic(id)
-			if err != nil {
-				b.Send(m.Sender, "Инфик не существует...")
-			} else {
-				message := fmt.Sprintf(`*%s*
-_%s_`, inf.Name, inf.Description)
-
-				b.Send(m.Sender, tb.Photo{
-					File:    tb.File{FilePath: inf.Image},
-					Caption: message,
-				})
-			}
-		} else {
-
-			u.Action(m.Text)
-			b.Send(m.Sender, u.BotState.Message())
-		}
+	//ИНЛИНЕКЕЙБОРДЫ
+	b.Handle(&IBtnCreare, func(c *tb.Callback) {
+		b.Respond(c)
+		u := GetUser(c.Sender.ID)
+		message, _ := SprintInfic(CreateInfic(u.ID))
+		b.Send(c.Sender, message)
 	})
 
 	b.Start()
+}
+
+func SprintInfic(id int) (tb.Sendable, error) {
+	inf, err := GetInfic(id)
+	sendable := &tb.Photo{
+		File: tb.File{FilePath: inf.Image},
+		Caption: fmt.Sprintf(`*%s*
+_%s_`, inf.Name, inf.Description),
+	}
+	return sendable, err
 }

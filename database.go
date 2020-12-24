@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-pg/pg/v9"
 	"github.com/go-pg/pg/v9/orm"
+	tb "gopkg.in/tucnak/telebot.v2"
 )
 
 func createSchema(db *pg.DB) error {
@@ -87,11 +88,15 @@ func NewDefaultUser(id int, ref int) (User, bool) {
 }
 
 //CreateInfic Создать историю
-func CreateInfic(name string, author int) int {
+func CreateInfic(author int) int {
+	nilPhoto := &tb.Photo{
+		File: tb.FromDisk("pustota.jpg"),
+	}
+
 	infic := &Infic{
-		Name:     name,
 		isPublic: false,
 		AuthorID: author,
+		Image:    nilPhoto.FilePath,
 	}
 
 	_, err := db.Model(infic).Insert()

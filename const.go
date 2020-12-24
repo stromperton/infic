@@ -53,4 +53,9 @@ var (
 		ResizeReplyKeyboard: true,
 		ReplyKeyboard:       [][]tb.ReplyButton{{RBtnRead}, {RBtnAccount, RBtnWrite}},
 	}
+
+	IBtnCreare   = tb.InlineButton{Text: "Начать новый", Data: "create"}
+	InlineWhrite = &tb.InlineKeyboardMarkup{
+		InlineKeyboard: [][]tb.InlineButton{{IBtnCreare}},
+	}
 )
