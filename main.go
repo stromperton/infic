@@ -69,9 +69,13 @@ func main() {
 	b.Handle(&RBtnWrite, func(m *tb.Message) {
 		u := GetUser(m.Sender.ID)
 
-		u.GetMyInfics()
-
 		message := fmt.Sprintf("Твои инфики:")
+		myInfics := u.GetMyInfics()
+
+		for _, inf := range myInfics {
+			message += fmt.Sprintln(fmt.Sprintf("/i%d *%s*", inf.ID, inf.Name))
+		}
+
 		b.Send(m.Sender, message)
 	})
 
@@ -86,7 +90,19 @@ func main() {
 		u := GetUser(m.Sender.ID)
 
 		if m.Text[:2] == "/i" {
-			b.Send(m.Sender, "это инфик")
+			id, _ := strconv.Atoi(m.Text[2:])
+			inf, err := GetInfic(id)
+			if err != nil {
+				b.Send(m.Sender, "Инфик не существует...")
+			} else {
+				message := fmt.Sprintf(`*%s*
+_%s_`, inf.Name, inf.Description)
+
+				b.Send(m.Sender, tb.Photo{
+					File:    tb.File{FilePath: inf.Image},
+					Caption: message,
+				})
+			}
 		} else {
 
 			u.Action(m.Text)

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 )
 
@@ -20,6 +21,7 @@ type Infic struct {
 	Name        string
 	Description string
 	Image       string
+	AuthorID    int
 	Story       [][]Message
 	isPublic    bool
 }
@@ -28,6 +30,20 @@ type Message struct {
 	Text    string
 	Level   int
 	Version int
+}
+
+func (u *User) Action(text string) {
+	switch u.BotState {
+	case WriteSetNameState:
+		u.EditableInficID = CreateInfic(text, u.ID)
+		u.SetBotState(WriteSetDescriptionState)
+	case WriteSetDescriptionState:
+		UpdateModel(&Infic{
+			ID:          u.EditableInficID,
+			Description: text,
+		})
+		u.SetBotState(DefaultState)
+	}
 }
 
 //GetState Получить состояние
@@ -45,16 +61,12 @@ func (u *User) AddKeys(num int) {
 	UpdateModel(u)
 }
 
-func (u *User) Action(text string) {
-	switch u.BotState {
-	case WriteSetNameState:
-		u.EditableInficID = CreateInfic(text)
-		u.SetBotState(WriteSetDescriptionState)
-	case WriteSetDescriptionState:
-		UpdateModel(&Infic{
-			ID:          u.EditableInficID,
-			Description: text,
-		})
-		u.SetBotState(DefaultState)
+//GetMyInfics Список моих инфиков
+func (u *User) GetMyInfics() []Infic {
+	infArr := &[]Infic{}
+	err := db.Model(infArr).Where("author_id = ?", u.ID).Select()
+	if err != nil {
+		fmt.Println(err)
 	}
+	return *infArr
 }

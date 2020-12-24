@@ -49,14 +49,14 @@ func GetUser(id int) User {
 }
 
 //GetInfic Извлечение игрока из базы данных по ID
-func GetInfic(id int) Infic {
+func GetInfic(id int) (Infic, error) {
 	inf := &Infic{ID: id}
 	err := db.Model(inf).WherePK().Select()
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	return *inf
+	return *inf, err
 }
 
 //UpdateModel Обновление игрока из базы данных по ID
@@ -87,10 +87,11 @@ func NewDefaultUser(id int, ref int) (User, bool) {
 }
 
 //CreateInfic Создать историю
-func CreateInfic(name string) int {
+func CreateInfic(name string, author int) int {
 	infic := &Infic{
 		Name:     name,
 		isPublic: false,
+		AuthorID: author,
 	}
 
 	_, err := db.Model(infic).Insert()
