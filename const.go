@@ -30,10 +30,6 @@ func (d BotState) Message() string {
 	}[d]
 }
 
-func (d BotState) Action() {
-
-}
-
 //AdminBot Telegram ID
 const AdminBot int = 303629013
 

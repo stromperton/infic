@@ -62,6 +62,7 @@ func main() {
 
 	//РЕПЛИКЕЙБОРДЫ
 	b.Handle(&RBtnRead, func(m *tb.Message) {
+
 		b.Send(m.Sender, "Список")
 	})
 
@@ -82,7 +83,8 @@ func main() {
 	b.Handle(tb.OnText, func(m *tb.Message) {
 		u := GetUser(m.Sender.ID)
 
-		u.BotState.Action()
+		u.Action(m.Text)
+		b.Send(m.Sender, u.BotState.Message())
 	})
 
 	b.Start()

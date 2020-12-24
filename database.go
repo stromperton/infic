@@ -39,9 +39,8 @@ func ConnectDataBase() {
 
 //GetUser Извлечение игрока из базы данных по ID
 func GetUser(id int) User {
-	u := &User{}
-	u.ID = id
-	err := db.Select(u)
+	u := &User{ID: id}
+	err := db.Model(u).WherePK().Select()
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -49,9 +48,20 @@ func GetUser(id int) User {
 	return *u
 }
 
-//UpdateUser Обновление игрока из базы данных по ID
-func UpdateUser(u User) {
-	_, err := db.Model(u).WherePK().Update()
+//GetInfic Извлечение игрока из базы данных по ID
+func GetInfic(id int) Infic {
+	inf := &Infic{ID: id}
+	err := db.Model(inf).WherePK().Select()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return *inf
+}
+
+//UpdateModel Обновление игрока из базы данных по ID
+func UpdateModel(m interface{}) {
+	_, err := db.Model(m).WherePK().Update()
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -76,14 +86,17 @@ func NewDefaultUser(id int, ref int) (User, bool) {
 	return *u, false
 }
 
-//CreateStory Создать историю
-func CreateStory(name string) {
+//CreateInfic Создать историю
+func CreateInfic(name string) int {
 	infic := Infic{
-		Name: name,
+		Name:     name,
+		isPublic: false,
 	}
 
 	_, err := db.Model(infic).Insert()
 	if err != nil {
 		panic(err)
 	}
+
+	return infic.ID
 }
