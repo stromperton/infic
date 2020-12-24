@@ -88,7 +88,7 @@ func NewDefaultUser(id int, ref int) (User, bool) {
 
 //CreateInfic Создать историю
 func CreateInfic(name string) int {
-	infic := Infic{
+	infic := &Infic{
 		Name:     name,
 		isPublic: false,
 	}
