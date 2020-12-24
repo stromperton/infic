@@ -10,7 +10,7 @@ type User struct {
 	Ref             int `pg:"ref,use_zero,notnull"`
 	Lang            string
 	BotState        BotState `pg:"bot_state,use_zero,notnull"`
-	Keys            int
+	Keys            int      `pg:"keys,use_zero,notnull"`
 	EditableInficID int
 }
 
@@ -37,12 +37,12 @@ func (u *User) GetState() string {
 
 func (u *User) SetBotState(newState BotState) {
 	u.BotState = newState
-	UpdateModel(*u)
+	UpdateModel(u)
 }
 
 func (u *User) AddKeys(num int) {
 	u.Keys += num
-	UpdateModel(*u)
+	UpdateModel(u)
 }
 
 func (u *User) Action(text string) {
