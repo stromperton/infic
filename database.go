@@ -9,7 +9,7 @@ import (
 )
 
 func createSchema(db *pg.DB) error {
-	for _, model := range []interface{}{&User{}} {
+	for _, model := range []interface{}{&User{}, &Infic{}} {
 		err := db.CreateTable(model, &orm.CreateTableOptions{
 			IfNotExists: true,
 		})
