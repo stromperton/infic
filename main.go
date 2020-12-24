@@ -110,7 +110,8 @@ func main() {
 		b.Respond(c)
 		u := GetUser(c.Sender.ID)
 		message, _ := SprintInfic(CreateInfic(u.ID), b)
-		b.Send(c.Sender, message)
+		_, err := b.Send(c.Sender, message)
+		fmt.Println(err)
 	})
 
 	b.Start()
