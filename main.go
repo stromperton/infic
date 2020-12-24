@@ -69,8 +69,10 @@ func main() {
 	b.Handle(&RBtnWrite, func(m *tb.Message) {
 		u := GetUser(m.Sender.ID)
 
-		u.SetBotState(WriteSetNameState)
-		b.Send(m.Sender, WriteSetNameState.Message())
+		u.GetMyInfics()
+
+		message := fmt.Sprintf("Твои инфики:")
+		b.Send(m.Sender, message)
 	})
 
 	b.Handle(&RBtnAccount, func(m *tb.Message) {
@@ -83,8 +85,13 @@ func main() {
 	b.Handle(tb.OnText, func(m *tb.Message) {
 		u := GetUser(m.Sender.ID)
 
-		u.Action(m.Text)
-		b.Send(m.Sender, u.BotState.Message())
+		if m.Text[:2] == "/i" {
+			b.Send(m.Sender, "это инфик")
+		} else {
+
+			u.Action(m.Text)
+			b.Send(m.Sender, u.BotState.Message())
+		}
 	})
 
 	b.Start()

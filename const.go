@@ -14,18 +14,28 @@ const (
 	MainMenuState
 	WriteSetNameState
 	WriteSetDescriptionState
+	WriteSetImageState
 	AccountCheckState
 )
 
 func (d BotState) String() string {
-	return [...]string{"Default", "MainMenu", "WriteSetName", "AccountCheckState"}[d]
+	return [...]string{
+		"Default",
+		"MainMenu",
+		"WriteSetName",
+		"WriteSetDescription",
+		"WriteSetImage",
+		"AccountCheckState",
+	}[d]
 }
 func (d BotState) Message() string {
 	return [...]string{
 		"Default",
 		"MainMenu",
-		"Введите название вашего инфика",
-		`🗝 <b>Аккаунт</b>
+		"Как назовем инфик?",
+		"Дайте краткое описание вашему инфику",
+		"Отправьте фотографию для обложки",
+		`🗝 *Аккаунт*
 		...`,
 	}[d]
 }
