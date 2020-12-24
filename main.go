@@ -95,7 +95,7 @@ func main() {
 			message += fmt.Sprintf("\n*/i%d %s*", inf.ID, inf.Name)
 		}
 
-		b.Send(m.Sender, message, IBtnCreare)
+		b.Send(m.Sender, message, InlineWhrite)
 	})
 
 	b.Handle(&RBtnAccount, func(m *tb.Message) {
