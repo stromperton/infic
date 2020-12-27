@@ -44,10 +44,14 @@ func main() {
 		if m.Text[:2] == "/i" {
 			id, _ := strconv.Atoi(m.Text[2:])
 			message, err := SprintInfic(id, b)
+			fmt.Println("ЧООО")
+			fmt.Println(err, id)
 			if err != nil {
+				fmt.Println("fgffhhfhfhfh")
 				b.Send(m.Sender, "Инфик не существует...")
 			} else {
 				b.Send(m.Sender, message)
+				fmt.Println("tttttttttttttttttt")
 			}
 		} else {
 
@@ -110,14 +114,14 @@ func main() {
 		b.Respond(c)
 		u := GetUser(c.Sender.ID)
 		message, _ := SprintInfic(CreateInfic(u.ID), b)
-		_, err := b.Send(c.Sender, message)
+		_, err := b.Send(c.Sender, message, InlineInfic)
 		fmt.Println(err)
 	})
 
 	b.Start()
 }
 
-func SprintInfic(id int, b *tb.Bot) (tb.Sendable, error) {
+func SprintInfic(id int, b *tb.Bot) (*tb.Photo, error) {
 	inf, err := GetInfic(id)
 
 	var file tb.File

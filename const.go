@@ -58,4 +58,8 @@ var (
 	InlineWhrite = &tb.ReplyMarkup{
 		InlineKeyboard: [][]tb.InlineButton{{IBtnCreare}},
 	}
+
+	InlineInfic = &tb.ReplyMarkup{
+		InlineKeyboard: [][]tb.InlineButton{{IBtnCreare}},
+	}
 )
