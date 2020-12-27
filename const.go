@@ -68,11 +68,11 @@ var (
 		InlineKeyboard: [][]tb.InlineButton{{IBtnCreate}},
 	}
 
-	InlineInfic = &tb.ReplyMarkup{
+	InlineInficEdit = &tb.ReplyMarkup{
 		InlineKeyboard: [][]tb.InlineButton{{IBtnEdit}, {IBtnEditName, IBtnEditDesc}, {IBtnEditImage, IBtnPublic}, {IBtnToList}},
 	}
 
-	InlineInficEdit = &tb.ReplyMarkup{
-		InlineKeyboard: [][]tb.InlineButton{{IBtnCreate, IBtnToList}, {}},
+	InlineInfic = &tb.ReplyMarkup{
+		InlineKeyboard: [][]tb.InlineButton{{IBtnRead, IBtnToList}, {}},
 	}
 )
