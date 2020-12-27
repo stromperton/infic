@@ -50,6 +50,8 @@ func main() {
 				keyboard := InlineInfic
 				if m.Sender.ID == aid {
 					keyboard = InlineInficEdit
+				} else if u.isInLibrary(id) {
+					keyboard = InlineInficWithRemove
 				}
 
 				b.Send(m.Sender, message, keyboard)
@@ -85,15 +87,24 @@ func main() {
 
 	//РЕПЛИКЕЙБОРДЫ
 	b.Handle(&RBtnRead, func(m *tb.Message) {
+		u := GetUser(m.Sender.ID)
 
-		b.Send(m.Sender, "Список")
+		message := fmt.Sprintf("📚 <b>Твоя библиотека</b>")
+		myInfics := u.GetMyLibrary()
+
+		for _, inf := range myInfics {
+
+			message += fmt.Sprintf("\n<b>/i%d %s</b> - %s", inf.ID, inf.Name, inf.Author.Name)
+		}
+
+		b.Send(m.Sender, message, InlineRead)
 	})
 
 	b.Handle(&RBtnWrite, func(m *tb.Message) {
 		u := GetUser(m.Sender.ID)
 
-		message := fmt.Sprintf("Твои инфики:")
-		myInfics := u.GetMyInfics()
+		message := fmt.Sprintf("✍️ <b>Твои рукописи</b>")
+		myInfics := u.GetMyWorks()
 
 		for _, inf := range myInfics {
 
@@ -116,6 +127,21 @@ func main() {
 		u := GetUser(c.Sender.ID)
 		message, _, _ := SprintInfic(CreateInfic(u.ID), b)
 		_, err := b.Send(c.Sender, message, InlineInficEdit)
+		fmt.Println(err)
+	})
+
+	b.Handle(&IBtnRead, func(c *tb.Callback) {
+		b.Respond(c)
+		u := GetUser(c.Sender.ID)
+
+		if u.isInLibrary(u.EditableInficID) {
+
+		} else {
+			meta := InficMeta{InficID: u.EditableInficID, Level: 0, Branch: 0}
+			u.Library = append(u.Library, meta)
+		}
+		message := "Текст"
+		_, err := b.Send(c.Sender, message, InlineInficRead)
 		fmt.Println(err)
 	})
 

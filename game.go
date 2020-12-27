@@ -13,6 +13,7 @@ type User struct {
 	Ref             int `pg:"ref,use_zero,notnull"`
 	EditableInficID int
 	BotState        BotState `pg:"bot_state,use_zero,notnull"`
+	Library         []InficMeta
 }
 
 //Infic Интерактивный рассказ
@@ -27,10 +28,16 @@ type Infic struct {
 	isPublic    bool
 }
 
-type Message struct {
-	Text    string
+//InficMeta Данные о закладках
+type InficMeta struct {
+	InficID int
 	Level   int
-	Version int
+	Branch  int
+}
+type Message struct {
+	Text   string
+	Level  int
+	Branch int
 }
 
 func (u *User) Action(text string) {
@@ -55,6 +62,19 @@ func (u *User) GetState() string {
 	return "Всё хорошо!" + strconv.Itoa(u.ID)
 }
 
+//GetState Получить состояние
+func (u *User) isInLibrary(inficID int) bool {
+	inLibrary := false
+
+	for _, inf := range u.Library {
+		if inf.InficID == inficID {
+			inLibrary = true
+		}
+	}
+
+	return inLibrary
+}
+
 func (u *User) SetBotState(newState BotState) {
 	u.BotState = newState
 	UpdateModel(u)
@@ -65,8 +85,18 @@ func (u *User) AddKeys(num int) {
 	UpdateModel(u)
 }
 
-//GetMyInfics Список моих инфиков
-func (u *User) GetMyInfics() []Infic {
+//GetMyWorks Список моих инфиков
+func (u *User) GetMyWorks() []Infic {
+	infArr := &[]Infic{}
+	err := db.Model(infArr).Relation("Author").Where("author.id = ?", u.ID).Select()
+	if err != nil {
+		fmt.Println(err)
+	}
+	return *infArr
+}
+
+//GetMyLibrary Список инфиков, из библиотеки
+func (u *User) GetMyLibrary() []Infic {
 	infArr := &[]Infic{}
 	err := db.Model(infArr).Relation("Author").Where("author.id = ?", u.ID).Select()
 	if err != nil {

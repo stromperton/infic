@@ -90,7 +90,7 @@ func NewDefaultUser(id int, ref int) (User, bool) {
 func CreateInfic(author int) int {
 	infic := &Infic{
 		Name:        "Новый инфик",
-		Description: "Если вы когда-нибудь и видели новые инфики, то могу гарантировать, что этот будет свежее всех свежых!",
+		Description: "Если вы когда-нибудь и видели новые инфики, то могу гарантировать, что этот будет свежее всех свежы́х!",
 		isPublic:    false,
 		AuthorID:    author,
 	}

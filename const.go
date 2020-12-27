@@ -54,9 +54,11 @@ var (
 		ReplyKeyboard:       [][]tb.ReplyButton{{RBtnRead}, {RBtnAccount, RBtnWrite}},
 	}
 
-	IBtnCreate = tb.InlineButton{Text: "✍️ Начать новый", Unique: "create"}
-	IBtnRead   = tb.InlineButton{Text: "📕 Читать", Unique: "read"}
-	IBtnToList = tb.InlineButton{Text: "⬅️ Назад к списку", Unique: "toList"}
+	IBtnCreate        = tb.InlineButton{Text: "✍️ Начать новый", Unique: "create"}
+	IBtnRead          = tb.InlineButton{Text: "📖 Читать", Unique: "read"}
+	IBtnAddLibrary    = tb.InlineButton{Text: "⭐️ Добавить в библиотеку", Unique: "addLibrary"}
+	IBtnRemoveLibrary = tb.InlineButton{Text: "❌ Убрать из библиотеки", Unique: "addLibrary"}
+	IBtnToList        = tb.InlineButton{Text: "⬅️ Назад к списку", Unique: "toList"}
 
 	IBtnEdit      = tb.InlineButton{Text: "✍️ Редактировать", Unique: "edit"}
 	IBtnPublic    = tb.InlineButton{Text: "📕 Опубликовать", Unique: "public"}
@@ -64,15 +66,31 @@ var (
 	IBtnEditDesc  = tb.InlineButton{Text: "Сменить описание", Unique: "editDesc"}
 	IBtnEditImage = tb.InlineButton{Text: "Сменить обложку", Unique: "editImage"}
 
+	IBtnMyLibrary = tb.InlineButton{Text: "📚 Моя библиотека", Unique: "library"}
+	IBtnAllListAZ = tb.InlineButton{Text: "Все инфики (A - Я)", Unique: "allListAZ"}
+	IBtnAllListID = tb.InlineButton{Text: "Все инфики (ID)", Unique: "allListID"}
+	IBtnRandom    = tb.InlineButton{Text: "🎲 Случайный", Unique: "random"}
+
 	InlineWhrite = &tb.ReplyMarkup{
 		InlineKeyboard: [][]tb.InlineButton{{IBtnCreate}},
 	}
 
 	InlineInficEdit = &tb.ReplyMarkup{
-		InlineKeyboard: [][]tb.InlineButton{{IBtnEdit}, {IBtnEditName, IBtnEditDesc}, {IBtnEditImage, IBtnPublic}, {IBtnToList}},
+		InlineKeyboard: [][]tb.InlineButton{{IBtnRead, IBtnEdit}, {IBtnEditName, IBtnEditDesc}, {IBtnEditImage, IBtnPublic}, {IBtnToList}},
 	}
 
 	InlineInfic = &tb.ReplyMarkup{
-		InlineKeyboard: [][]tb.InlineButton{{IBtnRead, IBtnToList}, {}},
+		InlineKeyboard: [][]tb.InlineButton{{IBtnRead}, {IBtnToList}},
+	}
+	InlineInficWithRemove = &tb.ReplyMarkup{
+		InlineKeyboard: [][]tb.InlineButton{{IBtnRead}, {IBtnRemoveLibrary}, {IBtnToList}},
+	}
+
+	InlineRead = &tb.ReplyMarkup{
+		InlineKeyboard: [][]tb.InlineButton{{IBtnAllListAZ, IBtnAllListID}, {IBtnMyLibrary, IBtnRandom}},
+	}
+
+	InlineInficRead = &tb.ReplyMarkup{
+		InlineKeyboard: [][]tb.InlineButton{{IBtnRead}},
 	}
 )
