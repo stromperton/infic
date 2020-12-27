@@ -48,10 +48,12 @@ func main() {
 			fmt.Println(err, id)
 			if err != nil {
 				fmt.Println("fgffhhfhfhfh")
-				b.Send(m.Sender, "Инфик не существует...")
+				_, err := b.Send(m.Sender, "Инфик не существует...")
+				fmt.Println(err)
 			} else {
-				b.Send(m.Sender, message)
+				_, err := b.Send(m.Sender, message)
 				fmt.Println("tttttttttttttttttt")
+				fmt.Println(err)
 			}
 		} else {
 
