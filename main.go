@@ -136,7 +136,7 @@ func SprintInfic(id int, b *tb.Bot) (*tb.Photo, error) {
 	sendable := &tb.Photo{
 		File: file,
 		Caption: fmt.Sprintf(`<b>%s</b>
-<i>%s</i>`, inf.Name, inf.Description),
+		<i>%s</i>`, inf.Name, inf.Description),
 	}
 	return sendable, err
 }
