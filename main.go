@@ -27,7 +27,7 @@ func main() {
 	b, err := tb.NewBot(tb.Settings{
 		Token:     token,
 		Poller:    poller,
-		ParseMode: tb.ModeMarkdownV2,
+		ParseMode: tb.ModeHTML,
 	})
 
 	if err != nil {
@@ -135,8 +135,8 @@ func SprintInfic(id int, b *tb.Bot) (*tb.Photo, error) {
 
 	sendable := &tb.Photo{
 		File: file,
-		Caption: fmt.Sprintf(`*%s*
-_%s_`, inf.Name, inf.Description),
+		Caption: fmt.Sprintf(`<b>%s</b>
+<i>%s</i>`, inf.Name, inf.Description),
 	}
 	return sendable, err
 }
