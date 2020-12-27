@@ -36,7 +36,7 @@ func (d BotState) Message() string {
 		"Дайте краткое описание вашему инфику",
 		"Отправьте фотографию для обложки",
 		`🗝 <b>Аккаунт</b>
-			...`,
+...`,
 	}[d]
 }
 
@@ -54,12 +54,25 @@ var (
 		ReplyKeyboard:       [][]tb.ReplyButton{{RBtnRead}, {RBtnAccount, RBtnWrite}},
 	}
 
-	IBtnCreare   = tb.InlineButton{Text: "Начать новый", Unique: "create"}
+	IBtnCreate = tb.InlineButton{Text: "✍️ Начать новый", Unique: "create"}
+	IBtnRead   = tb.InlineButton{Text: "📕 Читать", Unique: "read"}
+	IBtnToList = tb.InlineButton{Text: "⬅️ Назад к списку", Unique: "toList"}
+
+	IBtnEdit      = tb.InlineButton{Text: "✍️ Редактировать", Unique: "edit"}
+	IBtnPublic    = tb.InlineButton{Text: "📕 Опубликовать", Unique: "public"}
+	IBtnEditName  = tb.InlineButton{Text: "Сменить название", Unique: "editName"}
+	IBtnEditDesc  = tb.InlineButton{Text: "Сменить описание", Unique: "editDesc"}
+	IBtnEditImage = tb.InlineButton{Text: "Сменить обложку", Unique: "editImage"}
+
 	InlineWhrite = &tb.ReplyMarkup{
-		InlineKeyboard: [][]tb.InlineButton{{IBtnCreare}},
+		InlineKeyboard: [][]tb.InlineButton{{IBtnCreate}},
 	}
 
 	InlineInfic = &tb.ReplyMarkup{
-		InlineKeyboard: [][]tb.InlineButton{{IBtnCreare}},
+		InlineKeyboard: [][]tb.InlineButton{{IBtnEdit}, {IBtnEditName, IBtnEditDesc}, {IBtnEditImage, IBtnPublic}, {IBtnToList}},
+	}
+
+	InlineInficEdit = &tb.ReplyMarkup{
+		InlineKeyboard: [][]tb.InlineButton{{IBtnCreate, IBtnToList}, {}},
 	}
 )

@@ -43,17 +43,16 @@ func main() {
 
 		if m.Text[:2] == "/i" {
 			id, _ := strconv.Atoi(m.Text[2:])
-			message, err := SprintInfic(id, b)
-			fmt.Println("ЧООО")
-			fmt.Println(err, id)
+			message, aid, err := SprintInfic(id, b)
 			if err != nil {
-				fmt.Println("fgffhhfhfhfh")
-				_, err := b.Send(m.Sender, "Инфик не существует...")
-				fmt.Println(err)
+				b.Send(m.Sender, "Инфик не существует...")
 			} else {
-				_, err := b.Send(m.Sender, message)
-				fmt.Println("tttttttttttttttttt")
-				fmt.Println(err)
+				keyboard := InlineInfic
+				if m.Sender.ID == aid {
+					keyboard = InlineInficEdit
+				}
+
+				b.Send(m.Sender, message, keyboard)
 			}
 		} else {
 
@@ -98,7 +97,7 @@ func main() {
 
 		for _, inf := range myInfics {
 
-			message += fmt.Sprintf("\n*/i%d %s*", inf.ID, inf.Name)
+			message += fmt.Sprintf("\n<b>/i%d %s</b> - %s", inf.ID, inf.Name, inf.Author.Name)
 		}
 
 		b.Send(m.Sender, message, InlineWhrite)
@@ -112,18 +111,18 @@ func main() {
 	})
 
 	//ИНЛИНЕКЕЙБОРДЫ
-	b.Handle(&IBtnCreare, func(c *tb.Callback) {
+	b.Handle(&IBtnCreate, func(c *tb.Callback) {
 		b.Respond(c)
 		u := GetUser(c.Sender.ID)
-		message, _ := SprintInfic(CreateInfic(u.ID), b)
-		_, err := b.Send(c.Sender, message, InlineInfic)
+		message, _, _ := SprintInfic(CreateInfic(u.ID), b)
+		_, err := b.Send(c.Sender, message, InlineInficEdit)
 		fmt.Println(err)
 	})
 
 	b.Start()
 }
 
-func SprintInfic(id int, b *tb.Bot) (*tb.Photo, error) {
+func SprintInfic(id int, b *tb.Bot) (*tb.Photo, int, error) {
 	inf, err := GetInfic(id)
 
 	var file tb.File
@@ -136,7 +135,8 @@ func SprintInfic(id int, b *tb.Bot) (*tb.Photo, error) {
 	sendable := &tb.Photo{
 		File: file,
 		Caption: fmt.Sprintf(`<b>%s</b>
-		<i>%s</i>`, inf.Name, inf.Description),
+%s
+<i>%s</i>`, inf.Name, inf.Description, inf.Author.Name),
 	}
-	return sendable, err
+	return sendable, inf.AuthorID, err
 }

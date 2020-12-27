@@ -48,10 +48,10 @@ func GetUser(id int) User {
 	return *u
 }
 
-//GetInfic Извлечение игрока из базы данных по ID
+//GetInfic Извлечение инфика из базы данных по ID
 func GetInfic(id int) (Infic, error) {
 	inf := &Infic{ID: id}
-	err := db.Model(inf).WherePK().Select()
+	err := db.Model(inf).Relation("Author").WherePK().Select()
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -71,8 +71,8 @@ func UpdateModel(m interface{}) {
 func NewDefaultUser(id int, ref int) (User, bool) {
 	u := &User{}
 	u.ID = id
+	u.Name = "Непризнанный гений"
 	u.Ref = ref
-	u.Lang = "rus"
 	u.BotState = DefaultState
 
 	res, err := db.Model(u).OnConflict("DO NOTHING").Insert()
@@ -89,8 +89,10 @@ func NewDefaultUser(id int, ref int) (User, bool) {
 //CreateInfic Создать историю
 func CreateInfic(author int) int {
 	infic := &Infic{
-		isPublic: false,
-		AuthorID: author,
+		Name:        "Новый инфик",
+		Description: "Если вы когда-нибудь и видели новые инфики, то могу гарантировать, что этот будет свежее всех свежых!",
+		isPublic:    false,
+		AuthorID:    author,
 	}
 
 	_, err := db.Model(infic).Insert()

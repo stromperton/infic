@@ -8,11 +8,11 @@ import (
 //User Игрок
 type User struct {
 	ID              int
+	Name            string
+	Keys            int `pg:"keys,use_zero,notnull"`
 	Ref             int `pg:"ref,use_zero,notnull"`
-	Lang            string
-	BotState        BotState `pg:"bot_state,use_zero,notnull"`
-	Keys            int      `pg:"keys,use_zero,notnull"`
 	EditableInficID int
+	BotState        BotState `pg:"bot_state,use_zero,notnull"`
 }
 
 //Infic Интерактивный рассказ
@@ -22,6 +22,7 @@ type Infic struct {
 	Description string
 	Image       string
 	AuthorID    int
+	Author      *User `pg:"rel:has-one"`
 	Story       [][]Message
 	isPublic    bool
 }
@@ -67,7 +68,7 @@ func (u *User) AddKeys(num int) {
 //GetMyInfics Список моих инфиков
 func (u *User) GetMyInfics() []Infic {
 	infArr := &[]Infic{}
-	err := db.Model(infArr).Where("author_id = ?", u.ID).Select()
+	err := db.Model(infArr).Relation("Author").Where("author.id = ?", u.ID).Select()
 	if err != nil {
 		fmt.Println(err)
 	}
