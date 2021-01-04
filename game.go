@@ -43,22 +43,23 @@ type Message struct {
 }
 
 func (u *User) Action(message *tb.Message) {
+	infic := &Infic{ID: u.EditableInficID}
+	err := db.Model(infic).WherePK().Select()
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	switch u.BotState {
 	case EditNameState:
-		UpdateModel(&Infic{
-			ID:   u.EditableInficID,
-			Name: message.Text,
-		})
+		infic.Name = message.Text
 	case EditDescriptionState:
-		UpdateModel(&Infic{
-			ID:          u.EditableInficID,
-			Description: message.Text,
-		})
+		infic.Description = message.Text
 	case EditImageState:
-		UpdateModel(&Infic{
-			ID:    u.EditableInficID,
-			Image: message.Photo.FileID,
-		})
+		infic.Image = message.Photo.FileID
+	}
+	_, err = db.Model(infic).WherePK().Update()
+	if err != nil {
+		fmt.Println(err)
 	}
 	u.SetBotState(DefaultState)
 }
@@ -109,7 +110,7 @@ func (u *User) GetMyWorks() []Infic {
 //GetMyLibrary Список инфиков, из библиотеки
 func (u *User) GetMyLibrary(order string) []Infic {
 	infArr := &[]Infic{}
-	err := db.Model(infArr).Order(order).Limit(20).Select()
+	err := db.Model(infArr).Order(order).Select()
 	if err != nil {
 		fmt.Println(err)
 	}
