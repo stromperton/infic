@@ -193,16 +193,23 @@ func main() {
 
 	b.Handle(&IBtnMyLibrary, libraryFunc)
 
-	for i := BotState(0); i < EndEnumState; i++ {
-		b.Handle(i.Endpoint(), func(c *tb.Callback) {
-			b.Respond(c)
-			u := GetUser(c.Sender.ID)
+	eeefunc := func(c *tb.Callback, state BotState) {
+		b.Respond(c)
+		u := GetUser(c.Sender.ID)
 
-			u.SetBotState(i)
-			_, err := b.Send(c.Sender, i.Message())
-			fmt.Println(err)
-		})
+		u.SetBotState(state)
+		_, err := b.Send(c.Sender, state.Message())
+		fmt.Println(err)
 	}
+	b.Handle(EditNameState.Endpoint(), func(c *tb.Callback) {
+		eeefunc(c, EditNameState)
+	})
+	b.Handle(EditDescriptionState.Endpoint(), func(c *tb.Callback) {
+		eeefunc(c, EditDescriptionState)
+	})
+	b.Handle(EditImageState.Endpoint(), func(c *tb.Callback) {
+		eeefunc(c, EditImageState)
+	})
 
 	b.Start()
 }

@@ -109,7 +109,7 @@ func (u *User) GetMyWorks() []Infic {
 //GetMyLibrary Список инфиков, из библиотеки
 func (u *User) GetMyLibrary(order string) []Infic {
 	infArr := &[]Infic{}
-	err := db.Model(infArr).Order(order).Select()
+	err := db.Model(infArr).Order(order).Limit(20).Select()
 	if err != nil {
 		fmt.Println(err)
 	}
