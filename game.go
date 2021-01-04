@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"strconv"
+
+	tb "gopkg.in/tucnak/telebot.v2"
 )
 
 //User Игрок
@@ -40,21 +42,25 @@ type Message struct {
 	Branch int
 }
 
-func (u *User) Action(text string) {
+func (u *User) Action(message *tb.Message) {
 	switch u.BotState {
-	case WriteSetNameState:
+	case EditNameState:
 		UpdateModel(&Infic{
 			ID:   u.EditableInficID,
-			Name: text,
+			Name: message.Text,
 		})
-		u.SetBotState(DefaultState)
-	case WriteSetDescriptionState:
+	case EditDescriptionState:
 		UpdateModel(&Infic{
 			ID:          u.EditableInficID,
-			Description: text,
+			Description: message.Text,
 		})
-		u.SetBotState(DefaultState)
+	case EditImageState:
+		UpdateModel(&Infic{
+			ID:    u.EditableInficID,
+			Image: message.Photo.FileID,
+		})
 	}
+	u.SetBotState(DefaultState)
 }
 
 //GetState Получить состояние
@@ -80,6 +86,11 @@ func (u *User) SetBotState(newState BotState) {
 	UpdateModel(u)
 }
 
+func (u *User) SetEditableInfic(id int) {
+	u.EditableInficID = id
+	UpdateModel(u)
+}
+
 func (u *User) AddKeys(num int) {
 	u.Keys += num
 	UpdateModel(u)
@@ -98,7 +109,7 @@ func (u *User) GetMyWorks() []Infic {
 //GetMyLibrary Список инфиков, из библиотеки
 func (u *User) GetMyLibrary() []Infic {
 	infArr := &[]Infic{}
-	err := db.Model(infArr).Relation("Author").Where("author.id = ?", u.ID).Select()
+	err := db.Model(infArr).Order("name").Select()
 	if err != nil {
 		fmt.Println(err)
 	}

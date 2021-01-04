@@ -12,19 +12,20 @@ const (
 	DefaultState BotState = iota
 	//MainMenuState Главное меню
 	MainMenuState
-	WriteSetNameState
-	WriteSetDescriptionState
-	WriteSetImageState
+	EditNameState
+	EditDescriptionState
+	EditImageState
 	AccountCheckState
+	EndEnumState
 )
 
 func (d BotState) String() string {
 	return [...]string{
 		"Default",
 		"MainMenu",
-		"WriteSetName",
-		"WriteSetDescription",
-		"WriteSetImage",
+		"EditNameState",
+		"EditDescriptionState",
+		"EditImageState",
 		"AccountCheckState",
 	}[d]
 }
@@ -32,11 +33,22 @@ func (d BotState) Message() string {
 	return [...]string{
 		"Default",
 		"MainMenu",
-		"Как назовем инфик?",
-		"Дайте краткое описание вашему инфику",
-		"Отправьте фотографию для обложки",
+		"Хорошо. Отправь мне новое <b>название</b> для этого инфика.",
+		"Хорошо. Отправь мне новое <b>описание</b> для этого инфика.",
+		"Хорошо. Отправь мне новую <b>обложку</b> для этого инфика.",
 		`🗝 <b>Аккаунт</b>
 ...`,
+	}[d]
+}
+
+func (d BotState) Endpoint() string {
+	return "\f" + [...]string{
+		"",
+		"",
+		"editName",
+		"editDesc",
+		IBtnEditImage.Unique,
+		"",
 	}[d]
 }
 
@@ -55,13 +67,13 @@ var (
 	}
 
 	IBtnCreate        = tb.InlineButton{Text: "✍️ Начать новый", Unique: "create"}
-	IBtnRead          = tb.InlineButton{Text: "📖 Читать", Unique: "read"}
+	IBtnRead          = tb.InlineButton{Text: "📕 Читать", Unique: "read"}
 	IBtnAddLibrary    = tb.InlineButton{Text: "⭐️ Добавить в библиотеку", Unique: "addLibrary"}
 	IBtnRemoveLibrary = tb.InlineButton{Text: "❌ Убрать из библиотеки", Unique: "addLibrary"}
 	IBtnToList        = tb.InlineButton{Text: "⬅️ Назад к списку", Unique: "toList"}
 
 	IBtnEdit      = tb.InlineButton{Text: "✍️ Редактировать", Unique: "edit"}
-	IBtnPublic    = tb.InlineButton{Text: "📕 Опубликовать", Unique: "public"}
+	IBtnPublic    = tb.InlineButton{Text: "📖 Опубликовать", Unique: "public"}
 	IBtnEditName  = tb.InlineButton{Text: "Сменить название", Unique: "editName"}
 	IBtnEditDesc  = tb.InlineButton{Text: "Сменить описание", Unique: "editDesc"}
 	IBtnEditImage = tb.InlineButton{Text: "Сменить обложку", Unique: "editImage"}

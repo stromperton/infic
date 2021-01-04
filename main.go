@@ -38,29 +38,45 @@ func main() {
 	ConnectDataBase()
 	defer db.Close()
 
+	b.Handle(tb.OnPhoto, func(m *tb.Message) {
+		u := GetUser(m.Sender.ID)
+
+		if u.BotState == EditImageState {
+			u.Action(m)
+		} else {
+			b.Send(m.Sender, "А зачем мне сейчас эта фотография?")
+		}
+	})
+
 	b.Handle(tb.OnText, func(m *tb.Message) {
 		u := GetUser(m.Sender.ID)
 
-		if m.Text[:2] == "/i" {
-			id, _ := strconv.Atoi(m.Text[2:])
-			message, aid, err := SprintInfic(id, b)
-			if err != nil {
-				b.Send(m.Sender, "Инфик не существует...")
-			} else {
-				keyboard := InlineInfic
-				if m.Sender.ID == aid {
-					keyboard = InlineInficEdit
-				} else if u.isInLibrary(id) {
-					keyboard = InlineInficWithRemove
-				}
+		var sendable interface{}
+		var keyboard *tb.ReplyMarkup
+		var id int
 
-				b.Send(m.Sender, message, keyboard)
-			}
+		if u.BotState == DefaultState && m.Text[:2] == "/i" {
+			id, _ = strconv.Atoi(m.Text[2:])
+			u.SetEditableInfic(id)
 		} else {
-
-			u.Action(m.Text)
-			b.Send(m.Sender, u.BotState.Message())
+			u.Action(m)
+			id = u.EditableInficID
 		}
+
+		var aid int
+		sendable, aid, err = SprintInfic(id, b)
+		if err != nil {
+			b.Send(m.Sender, "Инфик не существует...")
+		} else {
+			keyboard = InlineInfic
+			if m.Sender.ID == aid {
+				keyboard = InlineInficEdit
+			} else if u.isInLibrary(id) {
+				keyboard = InlineInficWithRemove
+			}
+
+		}
+		b.Send(m.Sender, sendable, keyboard)
 	})
 
 	//КОМАНДЫ
@@ -144,6 +160,17 @@ func main() {
 		_, err := b.Send(c.Sender, message, InlineInficRead)
 		fmt.Println(err)
 	})
+
+	for i := BotState(0); i < EndEnumState; i++ {
+		b.Handle(BotState(i).Endpoint(), func(c *tb.Callback) {
+			b.Respond(c)
+			u := GetUser(c.Sender.ID)
+
+			u.SetBotState(BotState(i))
+			_, err := b.Send(c.Sender, BotState(i).Message())
+			fmt.Println(err)
+		})
+	}
 
 	b.Start()
 }
