@@ -101,12 +101,11 @@ func main() {
 		b.Send(m.Sender, GetTextFile("test"))
 	})
 
-	//РЕПЛИКЕЙБОРДЫ
-	b.Handle(&RBtnRead, func(m *tb.Message) {
+	libraryFunc := func(m *tb.Message) {
 		u := GetUser(m.Sender.ID)
 
 		message := fmt.Sprintf("📚 <b>Твоя библиотека</b>")
-		myInfics := u.GetMyLibrary()
+		myInfics := u.GetMyLibrary("name ASC")
 
 		for _, inf := range myInfics {
 
@@ -114,7 +113,10 @@ func main() {
 		}
 
 		b.Send(m.Sender, message, InlineRead)
-	})
+	}
+
+	//РЕПЛИКЕЙБОРДЫ
+	b.Handle(&RBtnRead, libraryFunc)
 
 	b.Handle(&RBtnWrite, func(m *tb.Message) {
 		u := GetUser(m.Sender.ID)
@@ -161,13 +163,43 @@ func main() {
 		fmt.Println(err)
 	})
 
+	b.Handle(&IBtnAllListAZ, func(m *tb.Message) {
+		u := GetUser(m.Sender.ID)
+
+		message := fmt.Sprintf("<b>Все инфики по алфавиту</b>")
+		myInfics := u.GetMyLibrary("name ASC")
+
+		for _, inf := range myInfics {
+
+			message += fmt.Sprintf("\n<b>/i%d %s</b> - %s", inf.ID, inf.Name, inf.Author.Name)
+		}
+
+		b.Send(m.Sender, message, InlineRead)
+	})
+
+	b.Handle(&IBtnAllListID, func(m *tb.Message) {
+		u := GetUser(m.Sender.ID)
+
+		message := fmt.Sprintf("<b>Все инфики по ID</b>")
+		myInfics := u.GetMyLibrary("id ASC")
+
+		for _, inf := range myInfics {
+
+			message += fmt.Sprintf("\n<b>/i%d %s</b> - %s", inf.ID, inf.Name, inf.Author.Name)
+		}
+
+		b.Send(m.Sender, message, InlineRead)
+	})
+
+	b.Handle(&IBtnMyLibrary, libraryFunc)
+
 	for i := BotState(0); i < EndEnumState; i++ {
-		b.Handle(BotState(i).Endpoint(), func(c *tb.Callback) {
+		b.Handle(i.Endpoint(), func(c *tb.Callback) {
 			b.Respond(c)
 			u := GetUser(c.Sender.ID)
 
-			u.SetBotState(BotState(i))
-			_, err := b.Send(c.Sender, BotState(i).Message())
+			u.SetBotState(i)
+			_, err := b.Send(c.Sender, i.Message())
 			fmt.Println(err)
 		})
 	}

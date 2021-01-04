@@ -107,9 +107,9 @@ func (u *User) GetMyWorks() []Infic {
 }
 
 //GetMyLibrary Список инфиков, из библиотеки
-func (u *User) GetMyLibrary() []Infic {
+func (u *User) GetMyLibrary(order string) []Infic {
 	infArr := &[]Infic{}
-	err := db.Model(infArr).Order("name").Select()
+	err := db.Model(infArr).Order(order).Select()
 	if err != nil {
 		fmt.Println(err)
 	}

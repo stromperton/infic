@@ -27,6 +27,7 @@ func (d BotState) String() string {
 		"EditDescriptionState",
 		"EditImageState",
 		"AccountCheckState",
+		"EndEnumState",
 	}[d]
 }
 func (d BotState) Message() string {
@@ -38,6 +39,7 @@ func (d BotState) Message() string {
 		"Хорошо. Отправь мне новую <b>обложку</b> для этого инфика.",
 		`🗝 <b>Аккаунт</b>
 ...`,
+		"EndEnumState",
 	}[d]
 }
 
@@ -49,6 +51,7 @@ func (d BotState) Endpoint() string {
 		"editDesc",
 		IBtnEditImage.Unique,
 		"",
+		"EndEnumState",
 	}[d]
 }
 
