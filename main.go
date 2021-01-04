@@ -143,7 +143,10 @@ func main() {
 	b.Handle(&IBtnCreate, func(c *tb.Callback) {
 		b.Respond(c)
 		u := GetUser(c.Sender.ID)
-		message, _, _ := SprintInfic(CreateInfic(u.ID), b)
+
+		inficID := CreateInfic(u.ID)
+		u.SetEditableInfic(inficID)
+		message, _, _ := SprintInfic(inficID, b)
 		_, err := b.Send(c.Sender, message, InlineInficEdit)
 		fmt.Println(err)
 	})
