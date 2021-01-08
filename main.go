@@ -244,7 +244,7 @@ func main() {
 			linkRow = append(linkRow, tb.InlineButton{Text: infic.Story[num].Title, Unique: "i" + fmt.Sprint(infic.ID) + "m" + fmt.Sprint(infic.Story[num].ID)})
 		}
 
-		message := fmt.Sprintf("<b>Сообщение ID%d<b/>\n\n%s", infic.Story[0].ID, infic.Story[0].Text)
+		message := fmt.Sprintf("<b>Сообщение ID%d</b>\n\n%s", infic.Story[0].ID, infic.Story[0].Text)
 		keyboard := &tb.ReplyMarkup{
 			InlineKeyboard: [][]tb.InlineButton{
 				{IBtnEditMessageText, IBtnEditMessageTitle},
