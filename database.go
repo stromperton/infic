@@ -96,8 +96,9 @@ func CreateInfic(author int) int {
 	}
 	infic.Story = map[int]Message{}
 	infic.Story[0] = Message{
-		ID:   0,
-		Text: fmt.Sprintf("Перед тобой минимальная функциональная единица инфика — обычное сообщение.\n\nЭто начало твоей новой истории!"),
+		ID:    0,
+		Title: "Стартовое сообщение",
+		Text:  fmt.Sprintf("Перед тобой минимальная функциональная единица инфика — обычное сообщение.\n\nЭто начало твоей новой истории!"),
 	}
 
 	_, err := db.Model(infic).Insert()
