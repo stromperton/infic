@@ -43,6 +43,25 @@ func main() {
 
 		if u.BotState == EditImageState {
 			u.Action(m)
+
+			var sendable interface{}
+			var keyboard *tb.ReplyMarkup
+			var id int
+
+			var aid int
+			sendable, aid, err = SprintInfic(id, b)
+			if err != nil {
+				b.Send(m.Sender, "Инфик не существует...")
+			} else {
+				keyboard = InlineInfic
+				if m.Sender.ID == aid {
+					keyboard = InlineInficEdit
+				} else if u.isInLibrary(id) {
+					keyboard = InlineInficWithRemove
+				}
+
+			}
+			b.Send(m.Sender, sendable, keyboard)
 		} else {
 			b.Send(m.Sender, "А зачем мне сейчас эта фотография?")
 		}
@@ -101,7 +120,7 @@ func main() {
 		b.Send(m.Sender, GetTextFile("test"))
 	})
 
-	libraryFunc := func(m *tb.Message) {
+	allListFunc := func(m *tb.Message) {
 		u := GetUser(m.Sender.ID)
 
 		message := fmt.Sprintf("📚 <b>Твоя библиотека</b>")
@@ -115,8 +134,23 @@ func main() {
 		b.Send(m.Sender, message, InlineRead)
 	}
 
+	allListFuncCallback := func(c *tb.Callback, order string, title string) {
+		b.Respond(c)
+		u := GetUser(c.Sender.ID)
+
+		message := fmt.Sprintf("📚 <b>" + title + "</b>")
+		myInfics := u.GetMyLibrary(order)
+
+		for _, inf := range myInfics {
+
+			message += fmt.Sprintf("\n<b>/i%d %s</b> - %s", inf.ID, inf.Name, inf.Author.Name)
+		}
+
+		b.Send(c.Sender, message, InlineRead)
+	}
+
 	//РЕПЛИКЕЙБОРДЫ
-	b.Handle(&RBtnRead, libraryFunc)
+	b.Handle(&RBtnRead, allListFunc)
 
 	b.Handle(&RBtnWrite, func(m *tb.Message) {
 		u := GetUser(m.Sender.ID)
@@ -166,35 +200,18 @@ func main() {
 		fmt.Println(err)
 	})
 
-	b.Handle(&IBtnAllListAZ, func(m *tb.Message) {
-		u := GetUser(m.Sender.ID)
-
-		message := fmt.Sprintf("<b>Все инфики по алфавиту</b>")
-		myInfics := u.GetMyLibrary("name ASC")
-
-		for _, inf := range myInfics {
-
-			message += fmt.Sprintf("\n<b>/i%d %s</b> - %s", inf.ID, inf.Name, inf.Author.Name)
-		}
-
-		b.Send(m.Sender, message, InlineRead)
+	b.Handle(&IBtnAllListAZ, func(c *tb.Callback) {
+		allListFuncCallback(c, "name ASC", "Все инфики по алфавиту")
 	})
 
-	b.Handle(&IBtnAllListID, func(m *tb.Message) {
-		u := GetUser(m.Sender.ID)
-
-		message := fmt.Sprintf("<b>Все инфики по ID</b>")
-		myInfics := u.GetMyLibrary("id ASC")
-
-		for _, inf := range myInfics {
-
-			message += fmt.Sprintf("\n<b>/i%d %s</b> - %s", inf.ID, inf.Name, inf.Author.Name)
-		}
-
-		b.Send(m.Sender, message, InlineRead)
+	b.Handle(&IBtnAllListID, func(c *tb.Callback) {
+		allListFuncCallback(c, "id ASC", "Все инфики по ID")
 	})
 
-	b.Handle(&IBtnMyLibrary, libraryFunc)
+	b.Handle(&IBtnMyLibrary, func(c *tb.Callback) {
+		allListFuncCallback(c, "id ASC", "Моя библиотека")
+	})
+	b.Handle(&IBtnMyLibrary, allListFunc)
 
 	eeefunc := func(c *tb.Callback, state BotState) {
 		b.Respond(c)
@@ -212,6 +229,32 @@ func main() {
 	})
 	b.Handle(EditImageState.Endpoint(), func(c *tb.Callback) {
 		eeefunc(c, EditImageState)
+	})
+
+	b.Handle(&IBtnEdit, func(c *tb.Callback) {
+		b.Respond(c)
+		u := GetUser(c.Sender.ID)
+
+		u.SetBotState(EditState)
+		infic, _ := GetInfic(u.EditableInficID)
+
+		var linkRow []tb.InlineButton
+
+		for _, num := range infic.Story[0].Links {
+			linkRow = append(linkRow, tb.InlineButton{Text: infic.Story[num].Title, Unique: "i" + fmt.Sprint(infic.ID) + "m" + fmt.Sprint(infic.Story[num].ID)})
+		}
+
+		message := fmt.Sprintf("<b>Сообщение ID%d<b/>\n\n%s", infic.Story[0].ID, infic.Story[0].Text)
+		keyboard := &tb.ReplyMarkup{
+			InlineKeyboard: [][]tb.InlineButton{
+				{IBtnEditMessageText, IBtnEditMessageTitle},
+				linkRow,
+				{IBtnNewMessage},
+			},
+		}
+
+		_, err := b.Send(c.Sender, message, keyboard)
+		fmt.Println(err)
 	})
 
 	b.Start()

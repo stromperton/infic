@@ -94,6 +94,10 @@ func CreateInfic(author int) int {
 		isPublic:    false,
 		AuthorID:    author,
 	}
+	infic.Story[0] = Message{
+		ID:   0,
+		Text: fmt.Sprintf("Перед тобой минимальная функциональная единица инфика — обычное сообщение.\n\nЭто начало твоей новой истории!"),
+	}
 
 	_, err := db.Model(infic).Insert()
 	if err != nil {

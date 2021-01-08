@@ -26,7 +26,7 @@ type Infic struct {
 	Image       string
 	AuthorID    int
 	Author      *User `pg:"rel:has-one"`
-	Story       [][]Message
+	Story       map[int]Message
 	isPublic    bool
 }
 
@@ -37,9 +37,10 @@ type InficMeta struct {
 	Branch  int
 }
 type Message struct {
-	Text   string
-	Level  int
-	Branch int
+	ID    int
+	Title string
+	Text  string
+	Links []int
 }
 
 func (u *User) Action(message *tb.Message) {

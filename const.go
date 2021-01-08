@@ -16,6 +16,7 @@ const (
 	EditDescriptionState
 	EditImageState
 	AccountCheckState
+	EditState
 	EndEnumState
 )
 
@@ -27,6 +28,7 @@ func (d BotState) String() string {
 		"EditDescriptionState",
 		"EditImageState",
 		"AccountCheckState",
+		"EditState",
 		"EndEnumState",
 	}[d]
 }
@@ -39,6 +41,7 @@ func (d BotState) Message() string {
 		"Хорошо. Отправь мне новую <b>обложку</b> для этого инфика.",
 		`🗝 <b>Аккаунт</b>
 ...`,
+		"Состояние редактирования инфика",
 		"EndEnumState",
 	}[d]
 }
@@ -51,6 +54,7 @@ func (d BotState) Endpoint() string {
 		"editDesc",
 		IBtnEditImage.Unique,
 		"",
+		"edit",
 		"EndEnumState",
 	}[d]
 }
@@ -85,6 +89,10 @@ var (
 	IBtnAllListAZ = tb.InlineButton{Text: "Все инфики (A - Я)", Unique: "allListAZ"}
 	IBtnAllListID = tb.InlineButton{Text: "Все инфики (ID)", Unique: "allListID"}
 	IBtnRandom    = tb.InlineButton{Text: "🎲 Случайный", Unique: "random"}
+
+	IBtnEditMessageText  = tb.InlineButton{Text: "✍️ Текст", Unique: "editMessageText"}
+	IBtnEditMessageTitle = tb.InlineButton{Text: "✍️ Заголовок", Unique: "editMessageTitle"}
+	IBtnNewMessage       = tb.InlineButton{Text: "Новое сообщение", Unique: "newMessage"}
 
 	InlineWhrite = &tb.ReplyMarkup{
 		InlineKeyboard: [][]tb.InlineButton{{IBtnCreate}},
