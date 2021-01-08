@@ -94,6 +94,7 @@ func CreateInfic(author int) int {
 		isPublic:    false,
 		AuthorID:    author,
 	}
+	infic.Story = map[int]Message{}
 	infic.Story[0] = Message{
 		ID:   0,
 		Text: fmt.Sprintf("Перед тобой минимальная функциональная единица инфика — обычное сообщение.\n\nЭто начало твоей новой истории!"),
