@@ -46,7 +46,7 @@ func main() {
 
 			var sendable interface{}
 			var keyboard *tb.ReplyMarkup
-			var id int
+			var id = u.EditableInficID
 
 			var aid int
 			sendable, aid, err = SprintInfic(id, b)
@@ -254,7 +254,7 @@ func main() {
 		}
 
 		_, err := b.Send(c.Sender, message, keyboard)
-		fmt.Println(err)
+		fmt.Println(err, message)
 	})
 
 	b.Start()
