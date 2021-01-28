@@ -13,7 +13,7 @@ type User struct {
 	Keys              int `pg:"keys,use_zero,notnull"`
 	Ref               int `pg:"ref,use_zero,notnull"`
 	EditableInficID   int
-	EditableMessageID int      `pg:"ref,use_zero,notnull"`
+	EditableMessageID int      `pg:"editable_message_id,use_zero,notnull"`
 	BotState          BotState `pg:"bot_state,use_zero,notnull"`
 	Library           []InficMeta
 }
