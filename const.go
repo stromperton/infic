@@ -16,7 +16,8 @@ const (
 	EditDescriptionState
 	EditImageState
 	AccountCheckState
-	EditState
+	EditTextState
+	EditTitleState
 	EndEnumState
 )
 
@@ -28,7 +29,8 @@ func (d BotState) String() string {
 		"EditDescriptionState",
 		"EditImageState",
 		"AccountCheckState",
-		"EditState",
+		"EditTextState",
+		"EditTitleState",
 		"EndEnumState",
 	}[d]
 }
@@ -41,7 +43,8 @@ func (d BotState) Message() string {
 		"Хорошо. Отправь мне новую <b>обложку</b> для этого инфика.",
 		`🗝 <b>Аккаунт</b>
 ...`,
-		"Состояние редактирования инфика",
+		"Хорошо. Отправь новый <b>текст</b> этого сообщения",
+		"Хорошо. Отправь новый <b>заголовок</b> для этого сообщения",
 		"EndEnumState",
 	}[d]
 }
@@ -54,7 +57,8 @@ func (d BotState) Endpoint() string {
 		"editDesc",
 		IBtnEditImage.Unique,
 		"",
-		"edit",
+		"editMessageText",
+		"editMessageTitle",
 		"EndEnumState",
 	}[d]
 }

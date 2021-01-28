@@ -58,6 +58,14 @@ func (u *User) Action(message *tb.Message) {
 		infic.Description = message.Text
 	case EditImageState:
 		infic.Image = message.Photo.FileID
+	case EditTextState:
+		mess := infic.Story[u.EditableMessageID]
+		mess.Text = message.Text
+		infic.Story[u.EditableMessageID] = mess
+	case EditTitleState:
+		mess := infic.Story[u.EditableMessageID]
+		mess.Title = message.Text
+		infic.Story[u.EditableMessageID] = mess
 	}
 	UpdateModel(infic)
 	u.SetBotState(DefaultState)

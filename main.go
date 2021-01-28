@@ -232,7 +232,6 @@ func main() {
 		b.Respond(c)
 		u := GetUser(c.Sender.ID)
 
-		u.SetBotState(EditState)
 		infic, _ := GetInfic(u.EditableInficID)
 
 		m, k := GetMessageMessage(u, infic, 0)
