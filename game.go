@@ -2,20 +2,20 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 
 	tb "gopkg.in/tucnak/telebot.v2"
 )
 
 //User Игрок
 type User struct {
-	ID              int
-	Name            string
-	Keys            int `pg:"keys,use_zero,notnull"`
-	Ref             int `pg:"ref,use_zero,notnull"`
-	EditableInficID int
-	BotState        BotState `pg:"bot_state,use_zero,notnull"`
-	Library         []InficMeta
+	ID                int
+	Name              string
+	Keys              int `pg:"keys,use_zero,notnull"`
+	Ref               int `pg:"ref,use_zero,notnull"`
+	EditableInficID   int
+	EditableMessageID int
+	BotState          BotState `pg:"bot_state,use_zero,notnull"`
+	Library           []InficMeta
 }
 
 //Infic Интерактивный рассказ
@@ -65,12 +65,7 @@ func (u *User) Action(message *tb.Message) {
 	u.SetBotState(DefaultState)
 }
 
-//GetState Получить состояние
-func (u *User) GetState() string {
-	return "Всё хорошо!" + strconv.Itoa(u.ID)
-}
-
-//GetState Получить состояние
+//isInLibrary В библиотеке?
 func (u *User) isInLibrary(inficID int) bool {
 	inLibrary := false
 
@@ -92,6 +87,10 @@ func (u *User) SetEditableInfic(id int) {
 	u.EditableInficID = id
 	UpdateModel(u)
 }
+func (u *User) SetEditableMessage(id int) {
+	u.EditableMessageID = id
+	UpdateModel(u)
+}
 
 func (u *User) AddKeys(num int) {
 	u.Keys += num
@@ -108,12 +107,26 @@ func (u *User) GetMyWorks() []Infic {
 	return *infArr
 }
 
-//GetMyLibrary Список инфиков, из библиотеки
-func (u *User) GetMyLibrary(order string) []Infic {
+//GetList Список инфиков, из библиотеки
+func (u *User) GetList(order string) []Infic {
 	infArr := &[]Infic{}
 	err := db.Model(infArr).Relation("Author").Order(order).Select()
 	if err != nil {
 		fmt.Println(err)
 	}
 	return *infArr
+}
+
+func (i *Infic) AddNewMessage(editableMessageID int) {
+	message := i.Story[editableMessageID]
+	message.Links = append(message.Links, len(i.Story))
+	i.Story[editableMessageID] = message
+
+	i.Story[len(i.Story)] = Message{
+		ID:    len(i.Story),
+		Title: "Новое сообщение",
+		Text:  "И вновь, и вновь...",
+	}
+
+	UpdateModel(i)
 }

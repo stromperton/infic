@@ -92,7 +92,7 @@ var (
 
 	IBtnEditMessageText  = tb.InlineButton{Text: "✍️ Текст", Unique: "editMessageText"}
 	IBtnEditMessageTitle = tb.InlineButton{Text: "✍️ Заголовок", Unique: "editMessageTitle"}
-	IBtnNewMessage       = tb.InlineButton{Text: "Новое сообщение", Unique: "newMessage"}
+	IBtnNewMessage       = tb.InlineButton{Text: "+", Unique: "newMessage"}
 
 	InlineWhrite = &tb.ReplyMarkup{
 		InlineKeyboard: [][]tb.InlineButton{{IBtnCreate}},
