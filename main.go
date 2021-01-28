@@ -101,6 +101,7 @@ func main() {
 			sendable, keyboard = GetMessageMessage(u, infic, u.EditableMessageID)
 		}
 
+		u.SetBotState(DefaultState)
 		b.Send(m.Sender, sendable, keyboard)
 	})
 

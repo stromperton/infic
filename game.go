@@ -68,7 +68,6 @@ func (u *User) Action(message *tb.Message) {
 		infic.Story[u.EditableMessageID] = mess
 	}
 	UpdateModel(infic)
-	u.SetBotState(DefaultState)
 }
 
 //isInLibrary В библиотеке?
