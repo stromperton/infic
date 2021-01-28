@@ -307,6 +307,7 @@ func GetMessageMessage(u User, infic Infic, mID int) (string, *tb.ReplyMarkup) {
 		}
 
 	}
+	keyboardRows = append(keyboardRows, linkRow)
 	keyboardRows = append(keyboardRows, []tb.InlineButton{IBtnNewMessage})
 
 	message := fmt.Sprintf("<b>Сообщение ID %d</b> <i>\"%s\"</i>\n%s", thisMess.ID, thisMess.Title, thisMess.Text)
