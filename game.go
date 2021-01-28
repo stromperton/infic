@@ -37,10 +37,11 @@ type InficMeta struct {
 	Branch  int
 }
 type Message struct {
-	ID    int
-	Title string
-	Text  string
-	Links []int
+	ID     int
+	Title  string
+	Text   string
+	Parent int
+	Childs []int
 }
 
 func (u *User) Action(message *tb.Message) {
@@ -117,13 +118,14 @@ func (u *User) GetList(order string) []Infic {
 func (infic *Infic) AddNewMessage(editableMessageID int) int {
 	id := len(infic.Story)
 	message := infic.Story[editableMessageID]
-	message.Links = append(message.Links, id)
+	message.Childs = append(message.Childs, id)
 	infic.Story[editableMessageID] = message
 
 	infic.Story[id] = Message{
-		ID:    id,
-		Title: "Новое сообщение",
-		Text:  "И вновь, и вновь...",
+		ID:     id,
+		Title:  "Новое сообщение",
+		Text:   "И вновь, и вновь...",
+		Parent: editableMessageID,
 	}
 
 	UpdateModel(infic)
