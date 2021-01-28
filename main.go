@@ -247,7 +247,13 @@ func main() {
 		myInfics := u.GetList("id ASC")
 		r := rand.Intn(len(myInfics))
 
-		message, keyboard, _ := SprintInfic(r+1, b)
+		message, aid, _ := SprintInfic(r+1, b)
+		keyboard := InlineInfic
+		if c.Sender.ID == aid {
+			keyboard = InlineInficEdit
+		} else if u.isInLibrary(r + 1) {
+			keyboard = InlineInficWithRemove
+		}
 		b.Send(c.Sender, message, keyboard)
 	})
 
