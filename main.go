@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"strconv"
 
@@ -239,6 +240,15 @@ func main() {
 
 	b.Handle(&IBtnMyLibrary, func(c *tb.Callback) {
 		allListFuncCallback(c, "id ASC", "Моя библиотека")
+	})
+	b.Handle(&IBtnRandom, func(c *tb.Callback) {
+		b.Respond(c)
+		u := GetUser(c.Sender.ID)
+		myInfics := u.GetList("id ASC")
+		r := rand.Intn(len(myInfics))
+
+		message, keyboard := GetInfic(r)
+		b.Send(c.Sender, message, keyboard)
 	})
 
 	b.Handle(&IBtnEdit, func(c *tb.Callback) {
