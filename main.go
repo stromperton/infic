@@ -82,7 +82,10 @@ func main() {
 			id = u.EditableInficID
 		}
 
-		if u.BotState == EditNameState || u.BotState == EditDescriptionState || u.BotState == EditImageState {
+		if u.BotState == EditTextState || u.BotState == EditTitleState {
+			infic, _ := GetInfic(id)
+			sendable, keyboard = GetMessageMessage(u, infic, u.EditableMessageID)
+		} else {
 			var aid int
 			sendable, aid, err = SprintInfic(id, b)
 			if err != nil {
@@ -94,11 +97,7 @@ func main() {
 				} else if u.isInLibrary(id) {
 					keyboard = InlineInficWithRemove
 				}
-
 			}
-		} else if u.BotState == EditTextState || u.BotState == EditTitleState {
-			infic, _ := GetInfic(id)
-			sendable, keyboard = GetMessageMessage(u, infic, u.EditableMessageID)
 		}
 
 		u.SetBotState(DefaultState)
