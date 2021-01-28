@@ -171,6 +171,31 @@ func main() {
 		b.Send(m.Sender, AccountCheckState.Message())
 	})
 
+	//ИНЛИНЕКЕЙБОРДЫ ДЛЯ СОСТОЯНИЙ
+	eeefunc := func(c *tb.Callback, state BotState) {
+		b.Respond(c)
+		u := GetUser(c.Sender.ID)
+
+		u.SetBotState(state)
+		_, err := b.Send(c.Sender, state.Message())
+		fmt.Println(err)
+	}
+	b.Handle(EditNameState.Endpoint(), func(c *tb.Callback) {
+		eeefunc(c, EditNameState)
+	})
+	b.Handle(EditDescriptionState.Endpoint(), func(c *tb.Callback) {
+		eeefunc(c, EditDescriptionState)
+	})
+	b.Handle(EditImageState.Endpoint(), func(c *tb.Callback) {
+		eeefunc(c, EditImageState)
+	})
+	b.Handle(EditTextState.Endpoint(), func(c *tb.Callback) {
+		eeefunc(c, EditTextState)
+	})
+	b.Handle(EditTitleState.Endpoint(), func(c *tb.Callback) {
+		eeefunc(c, EditTitleState)
+	})
+
 	//ИНЛИНЕКЕЙБОРДЫ
 	b.Handle(&IBtnCreate, func(c *tb.Callback) {
 		b.Respond(c)
@@ -208,24 +233,6 @@ func main() {
 
 	b.Handle(&IBtnMyLibrary, func(c *tb.Callback) {
 		allListFuncCallback(c, "id ASC", "Моя библиотека")
-	})
-
-	eeefunc := func(c *tb.Callback, state BotState) {
-		b.Respond(c)
-		u := GetUser(c.Sender.ID)
-
-		u.SetBotState(state)
-		_, err := b.Send(c.Sender, state.Message())
-		fmt.Println(err)
-	}
-	b.Handle(EditNameState.Endpoint(), func(c *tb.Callback) {
-		eeefunc(c, EditNameState)
-	})
-	b.Handle(EditDescriptionState.Endpoint(), func(c *tb.Callback) {
-		eeefunc(c, EditDescriptionState)
-	})
-	b.Handle(EditImageState.Endpoint(), func(c *tb.Callback) {
-		eeefunc(c, EditImageState)
 	})
 
 	b.Handle(&IBtnEdit, func(c *tb.Callback) {
