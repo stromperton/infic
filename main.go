@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/go-pg/pg/v9"
 	tb "gopkg.in/tucnak/telebot.v2"
@@ -245,6 +246,7 @@ func main() {
 		b.Respond(c)
 		u := GetUser(c.Sender.ID)
 		myInfics := u.GetList("id ASC")
+		rand.Seed(time.Now().UnixNano())
 		r := rand.Intn(len(myInfics))
 
 		message, aid, _ := SprintInfic(r+1, b)
