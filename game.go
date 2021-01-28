@@ -13,7 +13,7 @@ type User struct {
 	Keys              int `pg:"keys,use_zero,notnull"`
 	Ref               int `pg:"ref,use_zero,notnull"`
 	EditableInficID   int
-	EditableMessageID int
+	EditableMessageID int      `pg:"ref,use_zero,notnull"`
 	BotState          BotState `pg:"bot_state,use_zero,notnull"`
 	Library           []InficMeta
 }
@@ -58,10 +58,7 @@ func (u *User) Action(message *tb.Message) {
 	case EditImageState:
 		infic.Image = message.Photo.FileID
 	}
-	_, err = db.Model(infic).WherePK().Update()
-	if err != nil {
-		fmt.Println(err)
-	}
+	UpdateModel(infic)
 	u.SetBotState(DefaultState)
 }
 
@@ -128,8 +125,5 @@ func (infic *Infic) AddNewMessage(editableMessageID int) {
 		Text:  "И вновь, и вновь...",
 	}
 
-	_, err := db.Model(infic).WherePK().Update()
-	if err != nil {
-		fmt.Println(err)
-	}
+	UpdateModel(infic)
 }
