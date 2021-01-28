@@ -117,16 +117,19 @@ func (u *User) GetList(order string) []Infic {
 	return *infArr
 }
 
-func (i *Infic) AddNewMessage(editableMessageID int) {
-	message := i.Story[editableMessageID]
-	message.Links = append(message.Links, len(i.Story))
-	i.Story[editableMessageID] = message
+func (infic *Infic) AddNewMessage(editableMessageID int) {
+	message := infic.Story[editableMessageID]
+	message.Links = append(message.Links, len(infic.Story))
+	infic.Story[editableMessageID] = message
 
-	i.Story[len(i.Story)] = Message{
-		ID:    len(i.Story),
+	infic.Story[len(infic.Story)] = Message{
+		ID:    len(infic.Story),
 		Title: "Новое сообщение",
 		Text:  "И вновь, и вновь...",
 	}
 
-	UpdateModel(i)
+	_, err := db.Model(infic).WherePK().Update()
+	if err != nil {
+		fmt.Println(err)
+	}
 }
