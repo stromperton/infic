@@ -245,8 +245,11 @@ func main() {
 		u := GetUser(c.Sender.ID)
 		infic, _ := GetInfic(u.EditableInficID)
 
-		infic.AddNewMessage(u.EditableInficID)
+		infic.AddNewMessage(u.EditableMessageID)
 
+		m, k := GetMessageMessage(u, infic, u.EditableMessageID)
+
+		b.Edit(c.Message, m, k)
 	})
 
 	b.Handle("\fmessage", func(c *tb.Callback) {
