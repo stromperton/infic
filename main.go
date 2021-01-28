@@ -289,20 +289,30 @@ func GetMessageMessage(u User, infic Infic, mID int) (string, *tb.ReplyMarkup) {
 	thisMess := infic.Story[mID]
 
 	var linkRow []tb.InlineButton
-
-	for _, num := range thisMess.Childs {
-		linkRow = append(linkRow, tb.InlineButton{Text: infic.Story[num].Title, Unique: "message", Data: fmt.Sprint(infic.Story[num].ID)})
-	}
-	linkRow = append(linkRow, IBtnNewMessage)
-	message := fmt.Sprintf("<b>Сообщение ID %d</b> <i>\"%s\"</i>\n%s", thisMess.ID, thisMess.Title, thisMess.Text)
+	var keyboardRows [][]tb.InlineButton
 
 	parentMess := infic.Story[thisMess.Parent]
+	keyboardRows = append(keyboardRows, []tb.InlineButton{{Text: parentMess.Title, Unique: "message", Data: fmt.Sprint(parentMess.ID)}})
+	keyboardRows = append(keyboardRows, []tb.InlineButton{IBtnEditMessageText, IBtnEditMessageTitle})
+
+	i := 0
+	for _, num := range thisMess.Childs {
+		linkRow = append(linkRow, tb.InlineButton{Text: infic.Story[num].Title, Unique: "message", Data: fmt.Sprint(infic.Story[num].ID)})
+		i++
+
+		if i > 4 {
+			i = 0
+			keyboardRows = append(keyboardRows, linkRow)
+			linkRow = nil
+		}
+
+	}
+	keyboardRows = append(keyboardRows, []tb.InlineButton{IBtnNewMessage})
+
+	message := fmt.Sprintf("<b>Сообщение ID %d</b> <i>\"%s\"</i>\n%s", thisMess.ID, thisMess.Title, thisMess.Text)
+
 	keyboard := &tb.ReplyMarkup{
-		InlineKeyboard: [][]tb.InlineButton{
-			{tb.InlineButton{Text: parentMess.Title, Unique: "message", Data: fmt.Sprint(parentMess.ID)}},
-			{IBtnEditMessageText, IBtnEditMessageTitle},
-			linkRow,
-		},
+		InlineKeyboard: keyboardRows,
 	}
 	return message, keyboard
 }
