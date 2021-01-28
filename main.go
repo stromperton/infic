@@ -286,16 +286,20 @@ func SprintInfic(id int, b *tb.Bot) (*tb.Photo, int, error) {
 
 func GetMessageMessage(u User, infic Infic, mID int) (string, *tb.ReplyMarkup) {
 	u.SetEditableMessage(mID)
+	thisMess := infic.Story[mID]
 
 	var linkRow []tb.InlineButton
 
-	for _, num := range infic.Story[mID].Links {
+	for _, num := range thisMess.Childs {
 		linkRow = append(linkRow, tb.InlineButton{Text: infic.Story[num].Title, Unique: "message", Data: fmt.Sprint(infic.Story[num].ID)})
 	}
 	linkRow = append(linkRow, IBtnNewMessage)
-	message := fmt.Sprintf("<b>Сообщение ID %d</b> <i>\"%s\"</i>\n%s", infic.Story[mID].ID, infic.Story[mID].Title, infic.Story[mID].Text)
+	message := fmt.Sprintf("<b>Сообщение ID %d</b> <i>\"%s\"</i>\n%s", thisMess.ID, thisMess.Title, thisMess.Text)
+
+	parentMess := infic.Story[thisMess.Parent]
 	keyboard := &tb.ReplyMarkup{
 		InlineKeyboard: [][]tb.InlineButton{
+			{tb.InlineButton{Text: parentMess.Title, Unique: "message", Data: fmt.Sprint(parentMess.ID)}},
 			{IBtnEditMessageText, IBtnEditMessageTitle},
 			linkRow,
 		},
