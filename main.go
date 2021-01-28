@@ -300,10 +300,10 @@ func GetMessageMessage(u User, infic Infic, mID int) (string, *tb.ReplyMarkup) {
 		linkRow = append(linkRow, tb.InlineButton{Text: infic.Story[num].Title, Unique: "message", Data: fmt.Sprint(infic.Story[num].ID)})
 		i++
 
-		if i > 4 {
+		if i > 3 {
 			i = 0
 			keyboardRows = append(keyboardRows, linkRow)
-			linkRow = nil
+			linkRow = []tb.InlineButton{}
 		}
 
 	}
