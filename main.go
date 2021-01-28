@@ -82,19 +82,25 @@ func main() {
 			id = u.EditableInficID
 		}
 
-		var aid int
-		sendable, aid, err = SprintInfic(id, b)
-		if err != nil {
-			b.Send(m.Sender, "Инфик не существует...")
-		} else {
-			keyboard = InlineInfic
-			if m.Sender.ID == aid {
-				keyboard = InlineInficEdit
-			} else if u.isInLibrary(id) {
-				keyboard = InlineInficWithRemove
-			}
+		if u.BotState == EditNameState || u.BotState == EditDescriptionState || u.BotState == EditImageState {
+			var aid int
+			sendable, aid, err = SprintInfic(id, b)
+			if err != nil {
+				b.Send(m.Sender, "Инфик не существует...")
+			} else {
+				keyboard = InlineInfic
+				if m.Sender.ID == aid {
+					keyboard = InlineInficEdit
+				} else if u.isInLibrary(id) {
+					keyboard = InlineInficWithRemove
+				}
 
+			}
+		} else if u.BotState == EditTextState || u.BotState == EditTitleState {
+			infic, _ := GetInfic(id)
+			sendable, keyboard = GetMessageMessage(u, infic, u.EditableMessageID)
 		}
+
 		b.Send(m.Sender, sendable, keyboard)
 	})
 
