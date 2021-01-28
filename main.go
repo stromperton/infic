@@ -247,7 +247,7 @@ func main() {
 		myInfics := u.GetList("id ASC")
 		r := rand.Intn(len(myInfics))
 
-		message, keyboard := GetInfic(r)
+		message, keyboard := GetInfic(r + 1)
 		b.Send(c.Sender, message, keyboard)
 	})
 
