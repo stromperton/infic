@@ -74,6 +74,7 @@ func NewDefaultUser(id int, ref int) (User, bool) {
 	u.Name = "Непризнанный гений"
 	u.Ref = ref
 	u.BotState = DefaultState
+	u.Library = map[int]InficMeta{}
 
 	res, err := db.Model(u).OnConflict("DO NOTHING").Insert()
 	if err != nil {
