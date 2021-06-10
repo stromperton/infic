@@ -44,7 +44,7 @@ type Message struct {
 	Childs []int
 }
 
-func (u *User) Action(message *tb.Message) {
+func (u *User) Action(message *tb.Message) string {
 	infic := &Infic{ID: u.EditableInficID}
 	err := db.Model(infic).WherePK().Select()
 	if err != nil {
@@ -57,7 +57,11 @@ func (u *User) Action(message *tb.Message) {
 	case EditDescriptionState:
 		infic.Description = message.Text
 	case EditImageState:
-		infic.Image = message.Photo.FileID
+		if message.Photo != nil {
+			infic.Image = message.Photo.FileID
+		} else {
+			return "Для обложки подойдут только <b>сжатые изображения</b> формата .png/.jpg/.jpeg"
+		}
 	case EditTextState:
 		mess := infic.Story[u.EditableMessageID]
 		mess.Text = message.Text

@@ -80,7 +80,10 @@ func main() {
 			id, _ = strconv.Atoi(m.Text[2:])
 			u.SetEditableInfic(id)
 		} else {
-			u.Action(m)
+			err := u.Action(m)
+			if err != "" {
+				sendable = err
+			}
 			id = u.EditableInficID
 		}
 
