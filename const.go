@@ -82,6 +82,7 @@ var (
 	IBtnAddLibrary    = tb.InlineButton{Text: "⭐️ Добавить в библиотеку", Unique: "addLibrary"}
 	IBtnRemoveLibrary = tb.InlineButton{Text: "❌ Убрать из библиотеки", Unique: "addLibrary"}
 	IBtnToList        = tb.InlineButton{Text: "⬅️ Назад к списку", Unique: "toList"}
+	IBtnNext          = tb.InlineButton{Text: "📃 Далее", Unique: "next"}
 
 	IBtnEdit      = tb.InlineButton{Text: "✍️ Редактировать", Unique: "edit"}
 	IBtnPublic    = tb.InlineButton{Text: "📖 Опубликовать", Unique: "public"}
@@ -103,14 +104,14 @@ var (
 	}
 
 	InlineInficEdit = &tb.ReplyMarkup{
-		InlineKeyboard: [][]tb.InlineButton{{IBtnRead, IBtnEdit}, {IBtnEditName, IBtnEditDesc}, {IBtnEditImage, IBtnPublic}, {IBtnToList}},
+		InlineKeyboard: [][]tb.InlineButton{{IBtnRead, IBtnEdit}, {IBtnEditName, IBtnEditDesc}, {IBtnEditImage, IBtnPublic}},
 	}
 
 	InlineInfic = &tb.ReplyMarkup{
-		InlineKeyboard: [][]tb.InlineButton{{IBtnRead}, {IBtnToList}},
+		InlineKeyboard: [][]tb.InlineButton{{IBtnRead}},
 	}
 	InlineInficWithRemove = &tb.ReplyMarkup{
-		InlineKeyboard: [][]tb.InlineButton{{IBtnRead}, {IBtnRemoveLibrary}, {IBtnToList}},
+		InlineKeyboard: [][]tb.InlineButton{{IBtnRead}, {IBtnRemoveLibrary}},
 	}
 
 	InlineRead = &tb.ReplyMarkup{
@@ -118,6 +119,6 @@ var (
 	}
 
 	InlineInficRead = &tb.ReplyMarkup{
-		InlineKeyboard: [][]tb.InlineButton{{IBtnRead}},
+		InlineKeyboard: [][]tb.InlineButton{{IBtnNext}},
 	}
 )

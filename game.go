@@ -32,9 +32,8 @@ type Infic struct {
 
 //InficMeta Данные о закладках
 type InficMeta struct {
-	InficID int
-	Level   int
-	Branch  int
+	InficID   int
+	MessageID int
 }
 type Message struct {
 	ID     int
@@ -77,15 +76,26 @@ func (u *User) Action(message *tb.Message) string {
 
 //isInLibrary В библиотеке?
 func (u *User) isInLibrary(inficID int) bool {
-	inLibrary := false
-
 	for _, inf := range u.Library {
 		if inf.InficID == inficID {
-			inLibrary = true
+			return true
 		}
 	}
+	return false
+}
 
-	return inLibrary
+func (u *User) GetLibraryMessageID(inficID int) int {
+	for _, inf := range u.Library {
+		if inf.InficID == inficID {
+			return inf.MessageID
+		}
+	}
+	return 0
+}
+
+func (u *User) SetLibraryMessageID(inficID int, newMessageID int) {
+	u.Library[inficID].MessageID = newMessageID
+	UpdateModel(u)
 }
 
 func (u *User) SetBotState(newState BotState) {
@@ -135,7 +145,7 @@ func (infic *Infic) AddNewMessage(editableMessageID int) int {
 
 	infic.Story[id] = Message{
 		ID:     id,
-		Title:  "Новое сообщение",
+		Title:  "Еще один блок",
 		Text:   "И вновь, и вновь...",
 		Parent: editableMessageID,
 	}

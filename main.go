@@ -40,8 +40,16 @@ func main() {
 	ConnectDataBase()
 	defer db.Close()
 
+	b.Handle(tb.OnSticker, func(m *tb.Message) {
+		b.Send(m.Sender, "Непредвиденный ввод. Был отправлен стикер.")
+	})
+
+	b.Handle(tb.OnAnimation, func(m *tb.Message) {
+		b.Send(m.Sender, "Непредвиденный ввод. Была отправлена анимация.")
+	})
+
 	b.Handle(tb.OnDocument, func(m *tb.Message) {
-		b.Send(m.Sender, "Изображения должны быть отправлены в <b>сжатом виде</b>.")
+		b.Send(m.Sender, "Непредвиденный ввод. Был отправлен документ.")
 	})
 
 	b.Handle(tb.OnPhoto, func(m *tb.Message) {
@@ -183,14 +191,12 @@ func main() {
 		b.Respond(c)
 		u := GetUser(c.Sender.ID)
 
-		if u.isInLibrary(u.EditableInficID) {
-
-		} else {
-			meta := InficMeta{InficID: u.EditableInficID, Level: 0, Branch: 0}
+		isInL := u.isInLibrary(u.EditableInficID)
+		if !isInL {
+			meta := InficMeta{InficID: u.EditableInficID, MessageID: 0}
 			u.Library = append(u.Library, meta)
 		}
-		message := "Текст"
-		_, err := b.Send(c.Sender, message, InlineInficRead)
+		SendNextInficMessage(b, c, u)
 		fmt.Println(err)
 	})
 
@@ -214,9 +220,10 @@ func main() {
 
 		message, aid, _ := SprintInfic(r+1, b)
 		keyboard := InlineInfic
+		isInL := u.isInLibrary(r + 1)
 		if c.Sender.ID == aid {
 			keyboard = InlineInficEdit
-		} else if u.isInLibrary(r + 1) {
+		} else if isInL {
 			keyboard = InlineInficWithRemove
 		}
 		b.Send(c.Sender, message, keyboard)
@@ -245,6 +252,16 @@ func main() {
 		b.Edit(c.Message, m, k)
 	})
 
+	b.Handle(&IBtnNext, func(c *tb.Callback) {
+		b.Respond(c)
+		u := GetUser(c.Sender.ID)
+
+		infic, _ := GetInfic(u.EditableInficID)
+		u.SetLibraryMessageID(u.EditableInficID, infic.Story[u.EditableMessageID].Childs[0])
+		SendNextInficMessage(b, c, u)
+		b.Delete(c.Message)
+	})
+
 	b.Handle("\fmessage", func(c *tb.Callback) {
 		b.Respond(c)
 		u := GetUser(c.Sender.ID)
@@ -253,6 +270,16 @@ func main() {
 		m, k := GetMessageMessage(u, infic, id)
 
 		b.Edit(c.Message, m, k)
+	})
+
+	b.Handle("\fmessageRead", func(c *tb.Callback) {
+		b.Respond(c)
+		u := GetUser(c.Sender.ID)
+
+		id, _ := strconv.Atoi(c.Data)
+		u.SetLibraryMessageID(u.EditableInficID, id)
+		SendNextInficMessage(b, c, u)
+		b.Delete(c.Message)
 	})
 
 	b.Start()
@@ -290,7 +317,7 @@ func GetMessageMessage(u User, infic Infic, mID int) (string, *tb.ReplyMarkup) {
 
 	i := 0
 	for _, num := range thisMess.Childs {
-		linkRow = append(linkRow, tb.InlineButton{Text: infic.Story[num].Title, Unique: "message", Data: fmt.Sprint(infic.Story[num].ID)})
+		linkRow = append(linkRow, tb.InlineButton{Text: "📜 [" + infic.Story[num].Title + "]", Unique: "message", Data: fmt.Sprint(infic.Story[num].ID)})
 		i++
 
 		if i > 3 {
@@ -303,7 +330,7 @@ func GetMessageMessage(u User, infic Infic, mID int) (string, *tb.ReplyMarkup) {
 	keyboardRows = append(keyboardRows, linkRow)
 	keyboardRows = append(keyboardRows, []tb.InlineButton{IBtnNewMessage})
 
-	message := fmt.Sprintf("<b>Сообщение ID %d</b> <i>\"%s\"</i>\n%s", thisMess.ID, thisMess.Title, thisMess.Text)
+	message := fmt.Sprintf("<b>ID %d</b> <i>\"%s\"</i>\n%s", thisMess.ID, thisMess.Title, thisMess.Text)
 
 	keyboard := &tb.ReplyMarkup{
 		InlineKeyboard: keyboardRows,
@@ -327,9 +354,10 @@ func SendInficObject(b *tb.Bot, u User, m *tb.Message) {
 			b.Send(m.Sender, "Инфик не существует...")
 		} else {
 			keyboard = InlineInfic
+			isInL := u.isInLibrary(id)
 			if m.Sender.ID == aid {
 				keyboard = InlineInficEdit
-			} else if u.isInLibrary(id) {
+			} else if isInL {
 				keyboard = InlineInficWithRemove
 			}
 		}
@@ -337,4 +365,31 @@ func SendInficObject(b *tb.Bot, u User, m *tb.Message) {
 
 	u.SetBotState(DefaultState)
 	b.Send(m.Sender, sendable, keyboard)
+}
+func SendNextInficMessage(b *tb.Bot, c *tb.Callback, u User) {
+	infic, _ := GetInfic(u.EditableInficID)
+	mID := u.GetLibraryMessageID(u.EditableInficID)
+	u.SetEditableMessage(mID)
+
+	statMessage := fmt.Sprintf("🗝 Ключи: %d шт.", u.Keys)
+
+	b.Send(c.Sender, infic.Story[mID].Title)
+	b.Send(c.Sender, infic.Story[mID].Text)
+
+	var keyboard *tb.ReplyMarkup
+
+	if len(infic.Story[mID].Childs) > 1 {
+		var linkRow [][]tb.InlineButton
+
+		for _, num := range infic.Story[mID].Childs {
+			linkRow = append(linkRow, []tb.InlineButton{{Text: "📜 [" + infic.Story[num].Title + "]", Unique: "messageRead", Data: fmt.Sprint(infic.Story[num].ID)}})
+		}
+
+		keyboard = &tb.ReplyMarkup{
+			InlineKeyboard: linkRow,
+		}
+	} else {
+		keyboard = InlineInficRead
+	}
+	b.Send(c.Sender, statMessage, keyboard)
 }
