@@ -40,6 +40,10 @@ func main() {
 	ConnectDataBase()
 	defer db.Close()
 
+	b.Handle(tb.OnDocument, func(m *tb.Message) {
+		b.Send(m.Sender, "Изображения должны быть отправлены в <b>сжатом виде</b>.")
+	})
+
 	b.Handle(tb.OnPhoto, func(m *tb.Message) {
 		u := GetUser(m.Sender.ID)
 
