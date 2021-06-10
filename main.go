@@ -49,25 +49,7 @@ func main() {
 
 		if u.BotState == EditImageState {
 			u.Action(m)
-
-			var sendable interface{}
-			var keyboard *tb.ReplyMarkup
-			var id = u.EditableInficID
-
-			var aid int
-			sendable, aid, err = SprintInfic(id, b)
-			if err != nil {
-				b.Send(m.Sender, "Инфик не существует...")
-			} else {
-				keyboard = InlineInfic
-				if m.Sender.ID == aid {
-					keyboard = InlineInficEdit
-				} else if u.isInLibrary(id) {
-					keyboard = InlineInficWithRemove
-				}
-
-			}
-			b.Send(m.Sender, sendable, keyboard)
+			SendInficObject(b, u, m)
 		} else {
 			b.Send(m.Sender, "А зачем мне сейчас эта фотография?")
 		}
@@ -75,42 +57,16 @@ func main() {
 
 	b.Handle(tb.OnText, func(m *tb.Message) {
 		u := GetUser(m.Sender.ID)
-
-		var sendable interface{}
-		var keyboard *tb.ReplyMarkup
 		var id int
 
 		if u.BotState == DefaultState && m.Text[:2] == "/i" {
 			id, _ = strconv.Atoi(m.Text[2:])
 			u.SetEditableInfic(id)
 		} else {
-			err := u.Action(m)
-			if err != "" {
-				sendable = err
-			}
-			id = u.EditableInficID
+			u.Action(m)
 		}
 
-		if u.BotState == EditTextState || u.BotState == EditTitleState {
-			infic, _ := GetInfic(id)
-			sendable, keyboard = GetMessageMessage(u, infic, u.EditableMessageID)
-		} else {
-			var aid int
-			sendable, aid, err = SprintInfic(id, b)
-			if err != nil {
-				b.Send(m.Sender, "Инфик не существует...")
-			} else {
-				keyboard = InlineInfic
-				if m.Sender.ID == aid {
-					keyboard = InlineInficEdit
-				} else if u.isInLibrary(id) {
-					keyboard = InlineInficWithRemove
-				}
-			}
-		}
-
-		u.SetBotState(DefaultState)
-		b.Send(m.Sender, sendable, keyboard)
+		SendInficObject(b, u, m)
 	})
 
 	//КОМАНДЫ
@@ -353,4 +309,32 @@ func GetMessageMessage(u User, infic Infic, mID int) (string, *tb.ReplyMarkup) {
 		InlineKeyboard: keyboardRows,
 	}
 	return message, keyboard
+}
+
+func SendInficObject(b *tb.Bot, u User, m *tb.Message) {
+	var sendable interface{}
+	var keyboard *tb.ReplyMarkup
+	var id = u.EditableInficID
+	var err error
+
+	if u.BotState == EditTextState || u.BotState == EditTitleState {
+		infic, _ := GetInfic(id)
+		sendable, keyboard = GetMessageMessage(u, infic, u.EditableMessageID)
+	} else {
+		var aid int
+		sendable, aid, err = SprintInfic(id, b)
+		if err != nil {
+			b.Send(m.Sender, "Инфик не существует...")
+		} else {
+			keyboard = InlineInfic
+			if m.Sender.ID == aid {
+				keyboard = InlineInficEdit
+			} else if u.isInLibrary(id) {
+				keyboard = InlineInficWithRemove
+			}
+		}
+	}
+
+	u.SetBotState(DefaultState)
+	b.Send(m.Sender, sendable, keyboard)
 }
