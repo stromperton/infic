@@ -312,7 +312,7 @@ func GetMessageMessage(u User, infic Infic, mID int) (string, *tb.ReplyMarkup) {
 	var keyboardRows [][]tb.InlineButton
 
 	parentMess := infic.Story[thisMess.Parent]
-	keyboardRows = append(keyboardRows, []tb.InlineButton{{Text: parentMess.Title, Unique: "message", Data: fmt.Sprint(parentMess.ID)}})
+	keyboardRows = append(keyboardRows, []tb.InlineButton{{Text: "📜 [" + parentMess.Title + "]", Unique: "message", Data: fmt.Sprint(parentMess.ID)}})
 	keyboardRows = append(keyboardRows, []tb.InlineButton{IBtnEditMessageText, IBtnEditMessageTitle})
 
 	i := 0
@@ -371,9 +371,9 @@ func SendNextInficMessage(b *tb.Bot, c *tb.Callback, u User) {
 	mID := u.GetLibraryMessageID(u.EditableInficID)
 	u.SetEditableMessage(mID)
 
-	statMessage := fmt.Sprintf("🗝 Ключи: %d шт.", u.Keys)
+	statMessage := fmt.Sprintf("🗝 <b>Ключи:</b> %d шт.", u.Keys)
 
-	b.Send(c.Sender, infic.Story[mID].Title)
+	b.Send(c.Sender, "<b>"+infic.Story[mID].Title+"</b>")
 	b.Send(c.Sender, infic.Story[mID].Text)
 
 	var keyboard *tb.ReplyMarkup
@@ -382,7 +382,7 @@ func SendNextInficMessage(b *tb.Bot, c *tb.Callback, u User) {
 		var linkRow [][]tb.InlineButton
 
 		for _, num := range infic.Story[mID].Childs {
-			linkRow = append(linkRow, []tb.InlineButton{{Text: "📜 [" + infic.Story[num].Title + "]", Unique: "messageRead", Data: fmt.Sprint(infic.Story[num].ID)}})
+			linkRow = append(linkRow, []tb.InlineButton{{Text: infic.Story[num].Title + "[🗝 1]", Unique: "messageRead", Data: fmt.Sprint(infic.Story[num].ID)}})
 		}
 
 		keyboard = &tb.ReplyMarkup{
