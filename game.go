@@ -15,7 +15,7 @@ type User struct {
 	EditableInficID   int
 	EditableMessageID int      `pg:"editable_message_id,use_zero,notnull"`
 	BotState          BotState `pg:"bot_state,use_zero,notnull"`
-	Library           []InficMeta
+	Library           map[int]InficMeta
 }
 
 //Infic Интерактивный рассказ
@@ -94,7 +94,7 @@ func (u *User) GetLibraryMessageID(inficID int) int {
 }
 
 func (u *User) SetLibraryMessageID(inficID int, newMessageID int) {
-	u.Library[inficID].MessageID = newMessageID
+	u.Library[inficID] = InficMeta{InficID: inficID, MessageID: newMessageID}
 	UpdateModel(u)
 }
 

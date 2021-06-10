@@ -119,10 +119,10 @@ func main() {
 		u := GetUser(m.Sender.ID)
 
 		message := fmt.Sprintf("📚 <b>Твоя библиотека</b>")
-		myInfics := u.GetList("name ASC")
 
-		for _, inf := range myInfics {
+		for _, infmeta := range u.Library {
 
+			inf, _ := GetInfic(infmeta.InficID)
 			message += fmt.Sprintf("\n<b>/i%d %s</b> - %s", inf.ID, inf.Name, inf.Author.Name)
 		}
 
@@ -194,7 +194,7 @@ func main() {
 		isInL := u.isInLibrary(u.EditableInficID)
 		if !isInL {
 			meta := InficMeta{InficID: u.EditableInficID, MessageID: 0}
-			u.Library = append(u.Library, meta)
+			u.Library[u.EditableInficID] = meta
 		}
 		SendNextInficMessage(b, c, u)
 		fmt.Println(err)
