@@ -72,6 +72,7 @@ func (u *User) Action(message *tb.Message) string {
 		infic.Story[u.EditableMessageID] = mess
 	}
 	UpdateModel(infic)
+	return ""
 }
 
 //isInLibrary В библиотеке?
