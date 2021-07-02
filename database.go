@@ -74,6 +74,7 @@ func NewDefaultUser(id int, ref int) (User, bool) {
 	u.Name = "Непризнанный гений"
 	u.Ref = ref
 	u.BotState = DefaultState
+	u.Library = map[int]InficMeta{}
 
 	res, err := db.Model(u).OnConflict("DO NOTHING").Insert()
 	if err != nil {
@@ -93,6 +94,12 @@ func CreateInfic(author int) int {
 		Description: "Если вы когда-нибудь и видели новые инфики, то могу гарантировать, что этот будет свежее всех свежы́х!",
 		isPublic:    false,
 		AuthorID:    author,
+	}
+	infic.Story = map[int]Message{}
+	infic.Story[0] = Message{
+		ID:    0,
+		Title: "Стартовое сообщение",
+		Text:  fmt.Sprintf("Перед тобой минимальная функциональная единица инфика — обычное сообщение.\n\nТы можешь создавать новые части истории и перемещаться по уже созданным блокам с помощью кнопок внизу.\n\nЗаголовки сообщений предназначены для наименования выбора во время развилок, и для того чтобы тебе было легче ориентироваться в собственной рукописи.\n\nЭто начало твоей новой истории, просто начни творить!"),
 	}
 
 	_, err := db.Model(infic).Insert()

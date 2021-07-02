@@ -12,31 +12,54 @@ const (
 	DefaultState BotState = iota
 	//MainMenuState Главное меню
 	MainMenuState
-	WriteSetNameState
-	WriteSetDescriptionState
-	WriteSetImageState
+	EditNameState
+	EditDescriptionState
+	EditImageState
 	AccountCheckState
+	EditTextState
+	EditTitleState
+	EndEnumState
 )
 
 func (d BotState) String() string {
 	return [...]string{
 		"Default",
 		"MainMenu",
-		"WriteSetName",
-		"WriteSetDescription",
-		"WriteSetImage",
+		"EditNameState",
+		"EditDescriptionState",
+		"EditImageState",
 		"AccountCheckState",
+		"EditTextState",
+		"EditTitleState",
+		"EndEnumState",
 	}[d]
 }
 func (d BotState) Message() string {
 	return [...]string{
 		"Default",
 		"MainMenu",
-		"Как назовем инфик?",
-		"Дайте краткое описание вашему инфику",
-		"Отправьте фотографию для обложки",
+		"Хорошо. Отправь мне новое <b>название</b> для этого инфика.",
+		"Хорошо. Отправь мне новое <b>описание</b> для этого инфика.",
+		"Хорошо. Отправь мне новую <b>обложку</b> для этого инфика.",
 		`🗝 <b>Аккаунт</b>
 ...`,
+		"Хорошо. Отправь новый <b>текст</b> этого сообщения",
+		"Хорошо. Отправь новый <b>заголовок</b> для этого сообщения",
+		"EndEnumState",
+	}[d]
+}
+
+func (d BotState) Endpoint() string {
+	return "\f" + [...]string{
+		"",
+		"",
+		"editName",
+		"editDesc",
+		IBtnEditImage.Unique,
+		"",
+		"editMessageText",
+		"editMessageTitle",
+		"EndEnumState",
 	}[d]
 }
 
@@ -55,13 +78,14 @@ var (
 	}
 
 	IBtnCreate        = tb.InlineButton{Text: "✍️ Начать новый", Unique: "create"}
-	IBtnRead          = tb.InlineButton{Text: "📖 Читать", Unique: "read"}
+	IBtnRead          = tb.InlineButton{Text: "📕 Читать", Unique: "read"}
 	IBtnAddLibrary    = tb.InlineButton{Text: "⭐️ Добавить в библиотеку", Unique: "addLibrary"}
 	IBtnRemoveLibrary = tb.InlineButton{Text: "❌ Убрать из библиотеки", Unique: "addLibrary"}
 	IBtnToList        = tb.InlineButton{Text: "⬅️ Назад к списку", Unique: "toList"}
+	IBtnNext          = tb.InlineButton{Text: "📃 Далее", Unique: "next"}
 
 	IBtnEdit      = tb.InlineButton{Text: "✍️ Редактировать", Unique: "edit"}
-	IBtnPublic    = tb.InlineButton{Text: "📕 Опубликовать", Unique: "public"}
+	IBtnPublic    = tb.InlineButton{Text: "📖 Опубликовать", Unique: "public"}
 	IBtnEditName  = tb.InlineButton{Text: "Сменить название", Unique: "editName"}
 	IBtnEditDesc  = tb.InlineButton{Text: "Сменить описание", Unique: "editDesc"}
 	IBtnEditImage = tb.InlineButton{Text: "Сменить обложку", Unique: "editImage"}
@@ -71,19 +95,23 @@ var (
 	IBtnAllListID = tb.InlineButton{Text: "Все инфики (ID)", Unique: "allListID"}
 	IBtnRandom    = tb.InlineButton{Text: "🎲 Случайный", Unique: "random"}
 
+	IBtnEditMessageText  = tb.InlineButton{Text: "✍️ Текст", Unique: "editMessageText"}
+	IBtnEditMessageTitle = tb.InlineButton{Text: "✍️ Заголовок", Unique: "editMessageTitle"}
+	IBtnNewMessage       = tb.InlineButton{Text: "+", Unique: "newMessage"}
+
 	InlineWhrite = &tb.ReplyMarkup{
 		InlineKeyboard: [][]tb.InlineButton{{IBtnCreate}},
 	}
 
 	InlineInficEdit = &tb.ReplyMarkup{
-		InlineKeyboard: [][]tb.InlineButton{{IBtnRead, IBtnEdit}, {IBtnEditName, IBtnEditDesc}, {IBtnEditImage, IBtnPublic}, {IBtnToList}},
+		InlineKeyboard: [][]tb.InlineButton{{IBtnRead, IBtnEdit}, {IBtnEditName, IBtnEditDesc}, {IBtnEditImage, IBtnPublic}},
 	}
 
 	InlineInfic = &tb.ReplyMarkup{
-		InlineKeyboard: [][]tb.InlineButton{{IBtnRead}, {IBtnToList}},
+		InlineKeyboard: [][]tb.InlineButton{{IBtnRead}},
 	}
 	InlineInficWithRemove = &tb.ReplyMarkup{
-		InlineKeyboard: [][]tb.InlineButton{{IBtnRead}, {IBtnRemoveLibrary}, {IBtnToList}},
+		InlineKeyboard: [][]tb.InlineButton{{IBtnRead}, {IBtnRemoveLibrary}},
 	}
 
 	InlineRead = &tb.ReplyMarkup{
@@ -91,6 +119,6 @@ var (
 	}
 
 	InlineInficRead = &tb.ReplyMarkup{
-		InlineKeyboard: [][]tb.InlineButton{{IBtnRead}},
+		InlineKeyboard: [][]tb.InlineButton{{IBtnNext}},
 	}
 )
