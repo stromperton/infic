@@ -95,6 +95,10 @@ func main() {
 		b.Send(m.Sender, GetTextFile("start"), ReplyMain)
 	})
 
+	b.Handle("/tontest", func(m *tb.Message) {
+		b.Send(m.Sender, TestTon(), ReplyMain)
+	})
+
 	b.Handle("/test", func(m *tb.Message) {
 		b.Send(m.Sender, GetTextFile("test"))
 	})
